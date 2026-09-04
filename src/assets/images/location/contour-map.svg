@@ -1,0 +1,18 @@
+<svg viewBox="0 0 1000 800" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <!-- Topographic Contour Lines -->
+  <path d="M-50 150 C 150 100, 300 220, 500 180 C 700 140, 850 260, 1050 200" stroke="#000000" stroke-width="2.5" opacity="0.65"/>
+  <path d="M-50 220 C 180 170, 320 300, 520 250 C 720 200, 880 340, 1050 270" stroke="#000000" stroke-width="2.2" opacity="0.6"/>
+  <path d="M-50 290 C 200 240, 350 380, 550 320 C 750 260, 900 420, 1050 350" stroke="#000000" stroke-width="2.0" opacity="0.55"/>
+  <path d="M-50 360 C 220 310, 380 460, 580 400 C 780 340, 920 500, 1050 430" stroke="#000000" stroke-width="1.8" opacity="0.5"/>
+  <path d="M-50 440 C 250 380, 420 540, 620 480 C 820 420, 950 580, 1050 510" stroke="#000000" stroke-width="1.6" opacity="0.45"/>
+  <path d="M-50 520 C 280 460, 450 620, 650 560 C 850 500, 980 660, 1050 600" stroke="#000000" stroke-width="1.4" opacity="0.4"/>
+  <path d="M-50 600 C 300 540, 480 700, 680 640 C 880 580, 1000 740, 1050 680" stroke="#000000" stroke-width="1.2" opacity="0.35"/>
+
+  <!-- Elevation Contour Loops -->
+  <path d="M 250 250 C 350 180, 480 200, 420 320 C 360 420, 200 350, 250 250 Z" stroke="#000000" stroke-width="1.8" opacity="0.55"/>
+  <path d="M 280 270 C 340 220, 440 230, 400 300 C 360 370, 240 330, 280 270 Z" stroke="#000000" stroke-width="1.5" opacity="0.45"/>
+  <path d="M 310 290 C 330 260, 390 265, 370 300 C 350 330, 290 310, 310 290 Z" stroke="#000000" stroke-width="1.2" opacity="0.35"/>
+
+  <path d="M 650 450 C 780 380, 900 420, 850 540 C 800 640, 600 560, 650 450 Z" stroke="#000000" stroke-width="1.8" opacity="0.55"/>
+  <path d="M 680 470 C 760 410, 860 440, 820 520 C 780 590, 630 530, 680 470 Z" stroke="#000000" stroke-width="1.5" opacity="0.45"/>
+</svg>

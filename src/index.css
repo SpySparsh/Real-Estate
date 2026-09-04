@@ -1,0 +1,1443 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ivory: #F4F1EB;
+  --color-black: #171716;
+  --color-neutral: #A8A39A;
+  --color-accent: #5C493B;
+
+  --font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+
+  body {
+    font-family: var(--font-body);
+    font-weight: 400;
+    color: var(--color-black);
+    background-color: var(--color-ivory);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: 0;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-ivory);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+}
+
+@layer utilities {
+  .section-padding-x {
+    @apply px-6 md:px-12 lg:px-20;
+  }
+  
+  .section-padding-y {
+    @apply py-12 md:py-24 lg:py-32 xl:py-40;
+  }
+
+  .container-base {
+    @apply max-w-[1400px] mx-auto w-full;
+  }
+
+  .eyebrow {
+    @apply font-body text-xs tracking-[0.2em] uppercase text-neutral;
+  }
+
+  .display-heading {
+    @apply font-display font-medium text-black leading-[1.05];
+  }
+
+  .body-copy {
+    @apply font-body text-sm md:text-base lg:text-lg text-black/70 leading-relaxed;
+  }
+
+  .fine-divider {
+    @apply border-t border-neutral/30;
+  }
+
+  .cta-link {
+    @apply relative inline-flex items-center font-body text-xs tracking-[0.2em] uppercase text-black transition-colors duration-300 cursor-pointer pb-1;
+  }
+  
+  .cta-link::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-full h-[1px] bg-black origin-bottom-right scale-x-0 transition-transform duration-300 ease-out;
+  }
+  
+  .cta-link:hover::after, .cta-link:focus-visible::after {
+    @apply origin-bottom-left scale-x-100;
+  }
+}
+
+/* ── Global Scroll Progress Bar ── */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: var(--color-accent);
+  z-index: 9999;
+  pointer-events: none;
+  transition: none;
+}
+
+/* ── Project Curtain Reveal ── */
+.project-curtain {
+  position: absolute;
+  inset: 0;
+  background: var(--color-black);
+  z-index: 2;
+  transform-origin: top center;
+}
+
+.project-image-wrapper,
+.hero-image-wrapper,
+.vision-image {
+  transform-origin: center center;
+  backface-visibility: hidden;
+}
+
+.project-image-inner,
+.hero-image-inner,
+.vision-image-inner {
+  transform-origin: center center;
+  backface-visibility: hidden;
+}
+
+.project-image,
+.hero-image,
+.vision-image img {
+  transform-origin: center center;
+}
+
+/* ── Philosophy Large Background Number ── */
+
+/* ── Explore Cursor ── */
+.explore-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  pointer-events: none;
+  font-family: var(--font-body);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-ivory);
+  background: var(--color-black);
+  padding: 8px 16px;
+  border-radius: 999px;
+  opacity: 0;
+  transform: scale(0.8);
+  will-change: transform;
+}
+
+/* ── Dark Section Wipe Transition ── */
+.section-wipe-dark {
+  position: relative;
+}
+
+.section-wipe-dark::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(to bottom, var(--color-ivory), transparent);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ── Media Selector Styles ── */
+.media-selector-item {
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-neutral);
+  cursor: pointer;
+  padding: 6px 0;
+  border: none;
+  background: none;
+  transition: color 0.3s ease, opacity 0.3s ease;
+  position: relative;
+}
+
+.media-selector-item:hover,
+.media-selector-item.active {
+  color: var(--color-black);
+}
+
+.media-selector-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--color-black);
+}
+
+.mobile-menu {
+  transform: translateY(-10px) scale(0.985);
+}
+
+.mobile-menu.is-open {
+  transform: translateY(0) scale(1);
+}
+
+.project-mobile-media-nav button:disabled {
+  opacity: 0.72;
+  cursor: default;
+}
+
+.project-mobile-switcher {
+  border-bottom: 1px solid rgb(168 163 154 / 0.22);
+  border-top: 1px solid rgb(168 163 154 / 0.28);
+  margin: 0 0 0.9rem;
+  padding: 0.8rem 0 0.7rem;
+}
+
+.project-switcher-label {
+  color: rgb(23 23 22 / 0.72);
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  line-height: 1;
+  margin-bottom: 0.85rem;
+  text-transform: uppercase;
+}
+
+.project-mobile-media-nav {
+  display: grid;
+  grid-auto-columns: minmax(4.8rem, max-content);
+  grid-auto-flow: column;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.15rem;
+  padding-right: 1.1rem;
+  position: relative;
+  scrollbar-width: none;
+}
+
+.project-mobile-media-nav::after {
+  background: var(--color-black);
+  bottom: 0.15rem;
+  content: '';
+  height: 3px;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  transform: translateX(calc(var(--active-tab-index, 0) * 5.8rem));
+  transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+  width: 2.25rem;
+}
+
+.project-mobile-media-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.project-mobile-media-nav button {
+  min-height: 2.85rem;
+  border: 0;
+  border-bottom: 1px solid rgb(168 163 154 / 0.28);
+  background: transparent;
+  color: rgb(23 23 22 / 0.42);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  padding: 0.45rem 0 0.85rem;
+  position: relative;
+  text-align: left;
+  text-transform: uppercase;
+  transition: border-color 240ms ease, color 240ms ease, opacity 240ms ease;
+  white-space: nowrap;
+}
+
+.project-mobile-media-nav button span {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: rgb(168 163 154 / 0.65);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+}
+
+.project-mobile-media-nav button.active {
+  border-color: rgb(23 23 22 / 0.9);
+  color: var(--color-black);
+}
+
+.project-media-layer {
+  height: 100%;
+}
+
+.project-gallery-stage {
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  touch-action: pan-y;
+}
+
+.project-gallery-frame {
+  inset: 0;
+  height: 100%;
+  min-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  position: absolute;
+  width: 100%;
+  z-index: 1;
+}
+
+.project-gallery-frame.active {
+  pointer-events: auto;
+  z-index: 2;
+}
+
+.project-gallery-desktop-shell {
+  height: 100%;
+  position: relative;
+  width: 100%;
+}
+
+.project-gallery-desktop-main {
+  background: var(--color-black);
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.project-gallery-desktop-main::after {
+  background: linear-gradient(to top, rgb(23 23 22 / 0.24), transparent 48%);
+  content: '';
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+}
+
+.project-gallery-desktop-main-media {
+  height: 100%;
+  inset: 0;
+  overflow: hidden;
+  position: absolute;
+  width: 100%;
+}
+
+.project-gallery-desktop-image-layer {
+  inset: 0;
+  position: absolute;
+}
+
+.project-gallery-desktop-image-layer--previous {
+  z-index: 1;
+}
+
+.project-gallery-desktop-image-layer--current {
+  z-index: 2;
+}
+
+.project-gallery-desktop-main-image {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.project-gallery-desktop-main-image--current {
+  animation: projectGalleryDesktopImageReveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transform-origin: center center;
+}
+
+.project-gallery-desktop-main-image--outgoing {
+  animation: projectGalleryDesktopImageFadeOut 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transform-origin: center center;
+}
+
+.project-gallery-desktop-bottom-overlay {
+  background: linear-gradient(to top, rgb(23 23 22 / 0.12), transparent 52%);
+  bottom: 0;
+  height: 5.25rem;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  width: 100%;
+  z-index: 2;
+}
+
+.project-gallery-desktop-counter {
+  bottom: 1rem;
+  color: rgb(244 241 235 / 0.76);
+  font-family: var(--font-body);
+  font-size: 0.52rem;
+  left: 1rem;
+  letter-spacing: 0.18em;
+  position: absolute;
+  text-transform: uppercase;
+  z-index: 3;
+}
+
+.project-gallery-desktop-rail {
+  align-items: flex-end;
+  bottom: 0.85rem;
+  display: flex;
+  justify-content: flex-end;
+  position: absolute;
+  right: 0.9rem;
+  z-index: 3;
+}
+
+.project-gallery-desktop-nav-panel {
+  align-items: flex-end;
+  background: rgb(23 23 22 / 0.08);
+  backdrop-filter: blur(2px);
+  border: 1px solid rgb(255 255 255 / 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+  padding: 0.28rem 0.34rem 0.16rem;
+}
+
+.project-gallery-desktop-nav-label {
+  align-self: flex-start;
+  color: rgb(244 241 235 / 0.76);
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 0.46rem;
+  letter-spacing: 0.2em;
+  line-height: 1.1;
+  margin-bottom: -0.03rem;
+  text-transform: uppercase;
+}
+
+.project-gallery-desktop-nav-numbers {
+  align-items: center;
+  display: flex;
+  gap: 0.3rem;
+  line-height: 1;
+}
+
+.project-gallery-desktop-number {
+  background: transparent;
+  border: 0;
+  color: rgb(244 241 235 / 0.66);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.4rem;
+  letter-spacing: 0.14em;
+  padding: 0;
+  position: relative;
+  text-transform: uppercase;
+  transition: color 180ms ease, opacity 180ms ease;
+}
+
+.project-gallery-desktop-number:hover {
+  color: rgb(244 241 235 / 0.86);
+}
+
+.project-gallery-desktop-number.active {
+  color: rgb(244 241 235 / 0.98);
+}
+
+.project-gallery-desktop-number.active::after {
+  background: rgb(244 241 235 / 0.9);
+  bottom: -0.2rem;
+  content: '';
+  display: block;
+  height: 1px;
+  left: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.project-gallery-desktop-preview {
+  align-items: flex-start;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.18rem;
+  justify-content: flex-end;
+  opacity: 0.45;
+  padding: 0;
+  position: relative;
+  text-align: left;
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.project-gallery-desktop-preview:hover {
+  opacity: 0.8;
+}
+
+.project-gallery-desktop-preview.active {
+  opacity: 1;
+}
+
+.project-gallery-desktop-preview-figure {
+  background: rgb(255 255 255 / 0.04);
+  border-radius: 0;
+  border: 1px solid transparent;
+  display: block;
+  height: 3rem;
+  overflow: hidden;
+  position: relative;
+  width: 4.9rem;
+}
+
+.project-gallery-desktop-preview.active .project-gallery-desktop-preview-figure {
+  border-color: rgb(255 255 255 / 0.82);
+  width: 5.25rem;
+}
+
+.project-gallery-desktop-preview-image {
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.8;
+  transform: scale(1.02);
+  transition: opacity 180ms ease, transform 180ms ease;
+  width: 100%;
+}
+
+.project-gallery-desktop-preview:hover .project-gallery-desktop-preview-image,
+.project-gallery-desktop-preview.active .project-gallery-desktop-preview-image {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.project-gallery-desktop-preview-indicator {
+  background: rgb(244 241 235 / 0.9);
+  display: block;
+  height: 1px;
+  margin-top: 0.04rem;
+  width: 100%;
+}
+
+@keyframes projectGalleryDesktopImageReveal {
+  0% {
+    opacity: 0;
+    transform: scale(1.025);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes projectGalleryDesktopImageFadeOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.015);
+  }
+}
+
+.project-gallery-frame figcaption {
+  bottom: 1rem;
+  color: rgb(244 241 235 / 0.74);
+  font-family: var(--font-body);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  position: absolute;
+  right: 1rem;
+  text-transform: uppercase;
+  z-index: 2;
+}
+
+.project-gallery-controls {
+  align-items: center;
+  bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  left: 1rem;
+  pointer-events: none;
+  position: absolute;
+  right: 1rem;
+  z-index: 3;
+}
+
+.project-gallery-controls > button {
+  background: rgb(23 23 22 / 0.62);
+  border: 1px solid rgb(244 241 235 / 0.24);
+  color: rgb(244 241 235 / 0.82);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  line-height: 1;
+  min-height: 2.25rem;
+  padding: 0 0.75rem;
+  pointer-events: auto;
+  text-transform: uppercase;
+}
+
+.project-gallery-dots {
+  align-items: center;
+  background: rgb(23 23 22 / 0.5);
+  display: flex;
+  gap: 0.45rem;
+  padding: 0.65rem 0.75rem;
+  pointer-events: auto;
+}
+
+.project-gallery-dots button {
+  background: rgb(244 241 235 / 0.36);
+  border: 0;
+  cursor: pointer;
+  height: 0.2rem;
+  padding: 0;
+  transition: background 220ms ease, width 220ms ease;
+  width: 0.85rem;
+}
+
+.project-gallery-dots button.active {
+  background: var(--color-ivory);
+  width: 1.65rem;
+}
+
+.project-gallery-frame::after,
+.project-placeholder-media::after {
+  background: linear-gradient(to top, rgb(0 0 0 / 0.48), transparent 42%);
+  content: '';
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+}
+
+.project-placeholder-media {
+  background: var(--color-black);
+  height: 100%;
+  isolation: isolate;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+.project-film-placeholder {
+  background: var(--color-black);
+  box-shadow: none;
+  filter: none;
+  mix-blend-mode: normal;
+}
+
+.project-film-placeholder::before {
+  background:
+    linear-gradient(to bottom, rgb(23 23 22 / 0.08), rgb(23 23 22 / 0.7));
+  content: '';
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 1;
+}
+
+.project-placeholder-media img {
+  filter: grayscale(1) brightness(0.52);
+  height: 100%;
+  mix-blend-mode: normal;
+  object-fit: cover;
+  opacity: 1;
+  width: 100%;
+}
+
+.project-placeholder-overlay {
+  bottom: 50%;
+  display: grid;
+  gap: 0.45rem;
+  left: 1.25rem;
+  position: absolute;
+  right: 1.25rem;
+  text-align: center;
+  transform: translateY(50%);
+  z-index: 2;
+  justify-items: center;
+}
+
+.project-play-mark {
+  border: 1px solid rgb(244 241 235 / 0.55);
+  display: grid;
+  height: 2.75rem;
+  margin: 0 auto 0.6rem;
+  place-items: center;
+  width: 2.75rem;
+}
+
+.project-play-mark::before {
+  border-bottom: 0.42rem solid transparent;
+  border-left: 0.62rem solid var(--color-ivory);
+  border-top: 0.42rem solid transparent;
+  content: '';
+  margin-left: 0.12rem;
+}
+
+.project-map-grid {
+  background-image:
+    linear-gradient(rgb(244 241 235 / 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(244 241 235 / 0.12) 1px, transparent 1px);
+  background-size: 2.5rem 2.5rem;
+  inset: 0;
+  opacity: 0.75;
+  position: absolute;
+  z-index: 1;
+}
+
+.project-mobile-facts {
+  border-top: 1px solid rgb(168 163 154 / 0.26);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.25rem;
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+}
+
+.project-mobile-facts span {
+  color: rgb(23 23 22 / 0.56);
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   PHILOSOPHY
+   ========================================================= */
+
+.philosophy-section {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: var(--color-cream);
+  color: var(--color-black);
+}
+
+
+/* ---------------------------------------------------------
+   HEADER
+   --------------------------------------------------------- */
+
+.philosophy-header {
+  position: absolute;
+  top: clamp(2rem, 4vw, 4.5rem);
+  left: clamp(1.5rem, 5vw, 6rem);
+  right: clamp(1.5rem, 5vw, 6rem);
+  z-index: 5;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+
+  pointer-events: none;
+}
+
+.philosophy-eyebrow {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.philosophy-intro {
+  font-size: clamp(1.5rem, 2.2vw, 2.25rem);
+  font-weight: 600;
+  line-height: 1.05;
+  color: #5a5a5a;
+}
+
+
+/* ---------------------------------------------------------
+   STAGE SYSTEM
+   --------------------------------------------------------- */
+
+.philosophy-stage-container {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.philosophy-stage {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  min-height: 100vh;
+
+  overflow: hidden;
+}
+
+/* Safe non-JS fallback */
+.philosophy-stage:first-child {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+/* ---------------------------------------------------------
+   LAYER 1: BACKGROUND SVG WATERMARKS (INDIVIDUAL SCALE & VISIBILITY)
+   --------------------------------------------------------- */
+
+.philosophy-bg-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.philosophy-bg-svg {
+  position: absolute;
+
+  height: auto;
+  max-width: none;
+
+  /* Make SVGs and PNGs share the same subtle editorial watermark treatment */
+  filter: grayscale(1) contrast(1.1) brightness(1.05);
+
+  mix-blend-mode: multiply;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Location: Recognisable Topographic / Contour Lines Background */
+.philosophy-stage--location .philosophy-bg-svg {
+  width: clamp(95vw, 110vw, 125vw);
+  bottom: -15%;
+  left: -15%;
+  transform: rotate(-4deg);
+  opacity: 0.16;
+}
+
+/* Vision: Vanishing-Point / Perspective Grid */
+.philosophy-stage--vision .philosophy-bg-svg {
+  width: clamp(80vw, 95vw, 110vw);
+  top: -10%;
+  right: -8%;
+  transform: rotate(2deg);
+  opacity: 0.15;
+}
+
+/* Development: Recognisable Blueprint / Architectural Construction Grid */
+/* ---------------------------------------------------------
+   DEVELOPMENT BACKGROUND
+   --------------------------------------------------------- */
+
+.philosophy-stage--development .philosophy-bg-svg {
+  width: clamp(48vw, 58vw, 68vw);
+
+  top: 50%;
+  left: 50%;
+
+  bottom: auto;
+  right: auto;
+
+  transform: translate(-50%, -50%);
+
+  opacity: 0.13;
+}
+
+
+/* ---------------------------------------------------------
+   VALUE BACKGROUND
+   --------------------------------------------------------- */
+
+.philosophy-stage--value .philosophy-bg-svg {
+  width: clamp(55vw, 68vw, 80vw);
+
+  top: 50%;
+  left: 50%;
+
+  bottom: auto;
+  right: auto;
+
+  transform: translate(-50%, -50%);
+
+  opacity: 0.12;
+}
+
+
+/* ---------------------------------------------------------
+   LAYER 2: EDITORIAL CENTRAL CONTENT
+   --------------------------------------------------------- */
+
+.philosophy-stage-content {
+  position: relative;
+  z-index: 3;
+
+  width: min(58rem, 80vw);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-align: center;
+
+  pointer-events: none;
+}
+
+.philosophy-stage-number {
+  margin-bottom: 1.25rem;
+
+  font-size: 0.68rem;
+  font-weight: 500;
+
+  letter-spacing: 0.18em;
+
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.philosophy-stage-title {
+  margin-bottom: 1.5rem;
+
+  font-size: clamp(0.7rem, 0.9vw, 0.85rem);
+  font-weight: 500;
+
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+
+  color: rgba(0, 0, 0, 0.55);
+}
+
+.philosophy-stage-statement {
+  max-width: 15ch;
+  margin: 0;
+
+  font-family: var(--font-display);
+
+  font-size: clamp(3rem, 6vw, 7.5rem);
+  font-weight: 400;
+
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+
+  color: var(--color-black);
+}
+
+.philosophy-stage-support {
+  max-width: 32rem;
+  margin: 2rem 0 0;
+
+  font-size: clamp(0.8rem, 1vw, 1rem);
+  line-height: 1.65;
+
+  color: rgba(0, 0, 0, 0.55);
+}
+
+
+/* ---------------------------------------------------------
+   LAYER 3: FOREGROUND SVG ICONS & SUBSTANTIALLY ENHANCED SUPPORTING ICONS
+   --------------------------------------------------------- */
+
+.philosophy-foreground-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+
+  pointer-events: none;
+}
+
+.philosophy-icon-wrapper {
+  position: absolute;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  will-change: transform, opacity;
+}
+
+.philosophy-icon-svg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+
+  filter: grayscale(1) brightness(0.12);
+  opacity: 0.9;
+}
+
+/* Primary Icons */
+.philosophy-icon--primary {
+  width: clamp(160px, 16vw, 240px);
+  height: clamp(160px, 16vw, 240px);
+}
+
+/* Secondary Icons (Substantially Increased for Clear Readability) */
+.philosophy-icon--secondary {
+  width: clamp(140px, 13.5vw, 200px);
+  height: clamp(140px, 13.5vw, 200px);
+}
+
+/* Tertiary Icons (Substantially Increased for Clear Readability) */
+.philosophy-icon--tertiary {
+  width: clamp(110px, 10.5vw, 150px);
+  height: clamp(110px, 10.5vw, 150px);
+}
+
+/* Location Stage Icon Placement & Sizing */
+.philosophy-icon--location-1 {
+  top: 13%;
+  left: 7%;
+}
+
+.philosophy-icon--location-2 {
+  bottom: 14%;
+  right: 9%;
+  width: clamp(150px, 14.5vw, 210px);
+}
+
+.philosophy-icon--location-3 {
+  bottom: 20%;
+  left: 11%;
+}
+
+/* Vision Stage Icon Placement & Sizing */
+.philosophy-icon--vision-1 {
+  top: 22%;
+  left: 5%;
+  width: clamp(180px, 17vw, 250px);
+}
+
+.philosophy-icon--vision-2 {
+  top: 13%;
+  right: 12%;
+}
+
+.philosophy-icon--vision-3 {
+  bottom: 14%;
+  right: 7%;
+}
+
+/* Development Stage Icon Placement & Sizing */
+.philosophy-icon--development-1 {
+  top: 9%;
+  right: 6%;
+  width: clamp(180px, 17vw, 250px);
+}
+
+.philosophy-icon--development-2 {
+  bottom: 13%;
+  left: 7%;
+}
+
+.philosophy-icon--development-3 {
+  top: 15%;
+  left: 10%;
+}
+
+/* Value Stage Icon Placement & Sizing */
+.philosophy-icon--value-1 {
+  bottom: 9%;
+  left: 9%;
+  width: clamp(170px, 16vw, 240px);
+}
+
+.philosophy-icon--value-2 {
+  top: 14%;
+  right: 11%;
+}
+
+.philosophy-icon--value-3 {
+  bottom: 16%;
+  right: 12%;
+}
+
+
+/* ---------------------------------------------------------
+   PROGRESS INDICATOR
+   --------------------------------------------------------- */
+
+.philosophy-progress {
+  position: absolute;
+
+  left: clamp(1.5rem, 5vw, 6rem);
+  bottom: clamp(2rem, 4vw, 4rem);
+
+  z-index: 5;
+
+  display: flex;
+  align-items: center;
+
+  gap: 1.25rem;
+}
+
+.philosophy-progress-item {
+  position: relative;
+
+  font-size: 0.65rem;
+  font-weight: 500;
+
+  letter-spacing: 0.12em;
+
+  color: rgba(0, 0, 0, 0.3);
+
+  transition:
+    color 0.35s ease,
+    transform 0.35s ease;
+}
+
+.philosophy-progress-item.is-active {
+  color: var(--color-black);
+
+  transform: translateY(-2px);
+}
+
+.philosophy-progress-item.is-active::after {
+  content: '';
+
+  position: absolute;
+
+  left: 0;
+  bottom: -0.45rem;
+
+  width: 100%;
+  height: 1px;
+
+  background: currentColor;
+}
+
+
+/* ---------------------------------------------------------
+   MOBILE RESPONSIVE — CONTINUOUS ADJACENT STAGE VIEWPORT
+   --------------------------------------------------------- */
+
+@media (max-width: 767px) {
+  .philosophy-section {
+    position: relative;
+    min-height: 100vh;
+    height: auto;
+    overflow: visible;
+    padding: 0;
+    padding-bottom: 0;
+  }
+
+  /* HEADER */
+
+  .philosophy-header {
+    position: absolute;
+    top: clamp(1.5rem, 4vh, 2.5rem);
+    left: clamp(1.25rem, 5vw, 2rem);
+    right: clamp(1.25rem, 5vw, 2rem);
+    z-index: 5;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    pointer-events: none;
+  }
+
+  .philosophy-intro {
+    margin-top: 0;
+    max-width: 16rem;
+    font-size: 0.76rem;
+    line-height: 1.25;
+    text-align: right;
+  }
+
+ /* ---------------------------------------------------------
+   MOBILE — FULL VIEWPORT STAGE OCCUPANCY
+   --------------------------------------------------------- */
+
+.philosophy-stage-container {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  min-height: 100dvh;
+  display: block;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+
+.philosophy-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+  .philosophy-stage-content {
+    width: 100%;
+    max-width: 22rem;
+    padding: 0 1.25rem;
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+
+  .philosophy-stage-number {
+    margin-bottom: 0.35rem;
+  }
+
+  .philosophy-stage-title {
+    margin-bottom: 0.45rem;
+  }
+
+  .philosophy-stage-statement {
+    max-width: 13ch;
+
+    font-size: clamp(1.9rem, 8vw, 3.2rem);
+
+    line-height: 0.98;
+  }
+
+  .philosophy-stage-support {
+    max-width: 18rem;
+    margin-top: 0.5rem;
+  }
+
+  /* MOBILE BACKGROUNDS — INCREASED SCALE FOR IMMERSIVE OCCUPANCY (~40%) */
+
+.philosophy-bg-svg {
+  top: 50%;
+  bottom: auto;
+  left: auto;
+  right: auto;
+  width: 145vw;
+  transform: translateY(-50%);
+  opacity: 0.16;
+}
+
+/* LOCATION */
+.philosophy-stage--location .philosophy-bg-svg {
+  width: 154vw;
+  top: 50%;
+  bottom: auto;
+  left: 50%;
+  right: auto;
+  transform: translate(-50%, -50%);
+}
+
+/* VISION */
+.philosophy-stage--vision .philosophy-bg-svg {
+  width: 140vw;
+  top: 50%;
+  bottom: auto;
+  left: 50%;
+  right: auto;
+  transform: translate(-50%, -50%);
+}
+
+/* DEVELOPMENT */
+.philosophy-stage--development .philosophy-bg-svg {
+  width: 140vw;
+  top: 50%;
+  bottom: auto;
+  left: 50%;
+  right: auto;
+  transform: translate(-50%, -50%);
+}
+
+/* VALUE */
+.philosophy-stage--value .philosophy-bg-svg {
+  width: 140vw;
+  top: 50%;
+  bottom: auto;
+  left: 50%;
+  right: auto;
+  transform: translate(-50%, -50%);
+}
+
+  /* Mobile Icon Sizes — Significantly Larger (~40% increase) */
+  .philosophy-icon--primary {
+    width: clamp(105px, 28vw, 155px);
+    height: clamp(105px, 28vw, 155px);
+  }
+
+  .philosophy-icon--secondary {
+    width: clamp(85px, 22vw, 125px);
+    height: clamp(85px, 22vw, 125px);
+  }
+
+  .philosophy-icon--tertiary {
+    width: clamp(68px, 18vw, 100px);
+    height: clamp(68px, 18vw, 100px);
+  }
+
+  /* Mobile Icon Placement — Positioned further inward from screen edges */
+  .philosophy-icon--location-1 { top: 9%; left: 1.5rem; }
+  .philosophy-icon--location-2 { bottom: 11%; right: 1.5rem; }
+  .philosophy-icon--location-3 { bottom: 7%; left: 1.75rem; }
+
+  .philosophy-icon--vision-1 { top: 8%; left: 1.4rem; }
+  .philosophy-icon--vision-2 { top: 11%; right: 1.5rem; }
+  .philosophy-icon--vision-3 { bottom: 9%; right: 1.4rem; }
+
+  .philosophy-icon--development-1 { top: 8%; right: 1.4rem; }
+  .philosophy-icon--development-2 { bottom: 9%; left: 1.5rem; }
+  .philosophy-icon--development-3 { top: 12%; left: 1.4rem; }
+
+  .philosophy-icon--value-1 { bottom: 9%; left: 1.5rem; }
+  .philosophy-icon--value-2 { top: 8%; right: 1.4rem; }
+  .philosophy-icon--value-3 { bottom: 11%; right: 1.6rem; }
+
+  .philosophy-progress {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .section-padding-x {
+    padding-left: clamp(1.25rem, 6vw, 1.75rem);
+    padding-right: clamp(1.25rem, 6vw, 1.75rem);
+  }
+
+  #projects {
+  padding-bottom: 3.25rem;
+  padding-top: 1.25rem;
+}
+
+  #projects .projects-intro {
+    margin-bottom: 2rem;
+  }
+
+  #projects .project-article {
+    padding-bottom: 0.5rem;
+  }
+
+  #projects .space-y-16 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 3.5rem;
+  }
+
+  .project-image-wrapper.project-media-film {
+    aspect-ratio: 16 / 9;
+  }
+
+  .project-image-wrapper {
+    margin-top: 0.15rem;
+  }
+
+  .project-image-wrapper.project-media-location {
+    aspect-ratio: 4 / 5;
+  }
+
+  .project-image,
+  .hero-image,
+  .vision-image img {
+    height: 100%;
+    object-position: center 46%;
+  }
+
+  .hero-image {
+    object-position: center 42%;
+  }
+
+  .vision-image img {
+    object-position: 48% center;
+  }
+
+  .project-article + .project-article {
+    padding-top: 0;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-curtain,
+  .hero-curtain,
+  .vision-curtain {
+    display: none;
+  }
+
+  .mobile-menu {
+    animation: none !important;
+    transform: none;
+  }
+}
+
+/* ── Enquiry Field Focus Enhancement ── */
+.enquiry-field-wrapper {
+  position: relative;
+}
+
+.enquiry-field-wrapper::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--color-black);
+  transition: width 0.4s ease;
+}
+
+.enquiry-field-wrapper:focus-within::after {
+  width: 100%;
+}
