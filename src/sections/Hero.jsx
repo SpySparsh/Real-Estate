@@ -2,9 +2,11 @@ import { useRef } from 'react'
 import { hero, company } from '../data/siteData'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { CustomEase } from 'gsap/CustomEase'
 import { useGSAP } from '@gsap/react'
 
-gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(ScrollTrigger, CustomEase)
+CustomEase.create('premiumReveal', '0.22, 1, 0.36, 1')
 
 function Hero() {
   const containerRef = useRef(null)
@@ -16,7 +18,7 @@ function Hero() {
     // DESKTOP — Cinematic Entrance + Pointer Depth + Scroll Separation
     // ══════════════════════════════════════════════════════════════
     mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
-      // ── Entrance (unchanged) ──
+      const isScrolled = window.scrollY > 0
       const entranceTl = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
       entranceTl.from('.reveal-nav', {
@@ -31,9 +33,9 @@ function Hero() {
         ease: 'power3.inOut',
       }, "-=0.5")
       .fromTo('.hero-image',
-        { scale: 1.18 },
-        { scale: 1, duration: 1.6, ease: 'power2.out' },
-        "-=1.4"
+        { scale: 0.96, opacity: 0, y: 12 },
+        { scale: 1, opacity: 1, y: 0, duration: 0.8, ease: 'premiumReveal' },
+        "-=1.1" // Align with the curtain reveal
       )
       .from('.hero-headline-line', {
         yPercent: 120,
@@ -53,6 +55,10 @@ function Hero() {
         y: 10,
         duration: 1,
       }, "-=0.3")
+
+      if (isScrolled) {
+        entranceTl.progress(1)
+      }
 
       // ── Pointer Depth (unchanged) ──
       // Image: stronger response — quickTo owns x and y on .hero-image-wrapper
@@ -283,7 +289,7 @@ scrollTl
     // MOBILE — Entrance + One Coordinated Scroll Timeline
     // ══════════════════════════════════════════════════════════════
     mm.add("(max-width: 767px) and (prefers-reduced-motion: no-preference)", () => {
-      // ── Entrance (unchanged) ──
+      const isScrolled = window.scrollY > 0
       const entranceTl = gsap.timeline({ defaults: { ease: 'power3.out' } })
 
       entranceTl.from('.reveal-nav', {
@@ -298,9 +304,9 @@ scrollTl
         "-=0.3"
       )
       .fromTo('.hero-image',
-        { scale: 1.1, filter: 'grayscale(1) brightness(0.85)' },
-        { scale: 1,   filter: 'grayscale(1) brightness(0.85)', duration: 1.0 },
-        "-=0.9"
+        { scale: 0.96, opacity: 0, y: 12, filter: 'grayscale(1) brightness(0.85)' },
+        { scale: 1, opacity: 1, y: 0, duration: 0.8, ease: 'premiumReveal', filter: 'grayscale(1) brightness(0.85)' },
+        "-=0.6"
       )
       .from('.hero-headline-line', {
         yPercent: 100,
@@ -324,6 +330,10 @@ scrollTl
         duration: 0.9,
         ease: 'power2.inOut',
       }, "-=0.3")
+
+      if (isScrolled) {
+        entranceTl.progress(1)
+      }
 
       const container = containerRef.current
       const lines = container.querySelectorAll('.hero-headline-line')

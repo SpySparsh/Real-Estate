@@ -158,6 +158,247 @@
 
 /* ── Philosophy Large Background Number ── */
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   INTRODUCTION SECTION
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Section shell */
+.intro-section {
+  position: relative;
+  background: var(--color-ivory);
+  overflow: hidden;
+  padding: clamp(4rem, 8vh, 7rem) clamp(1.5rem, 5vw, 5rem);
+}
+
+.intro-inner {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 4vh, 3rem);
+}
+
+/* Eyebrow */
+.intro-eyebrow {
+  /* inherits .eyebrow utility */
+}
+
+/* ─── Two-column grid ───────────────────────────────────────────────────── */
+
+.intro-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(2.5rem, 5vw, 4rem);
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .intro-grid {
+    grid-template-columns: 1fr 1.45fr;
+    gap: clamp(3rem, 6vw, 6rem);
+    align-items: center;
+  }
+}
+
+/* ─── Left column: scales ───────────────────────────────────────────────── */
+
+.intro-scales-col {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.75rem, 3.5vh, 2.75rem);
+  /* On mobile, order after image */
+  order: 2;
+}
+
+@media (min-width: 768px) {
+  .intro-scales-col {
+    order: 1;
+  }
+}
+
+/* Stage toggle buttons (Planning / Developed) */
+.intro-stage-indicators {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.intro-stage-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(23, 23, 22, 0.35);
+  transition: color 0.3s ease;
+}
+
+.intro-stage-btn.is-active {
+  color: var(--color-black);
+}
+
+.intro-stage-dot-indicator {
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.intro-stage-btn.is-active .intro-stage-dot-indicator {
+  opacity: 1;
+}
+
+.intro-stage-btn-label {
+  /* text only */
+}
+
+/* Scales list */
+.intro-scales-list {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.4rem, 2.8vh, 2.2rem);
+}
+
+/* Single scale row */
+.intro-scale-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.intro-scale-label {
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(23, 23, 22, 0.45);
+}
+
+.intro-scale-track-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+/* The horizontal track line */
+.intro-scale-baseline {
+  position: relative;
+  width: 100%;
+  height: 1px;
+  background: rgba(23, 23, 22, 0.15);
+}
+
+/* Tick marks */
+.intro-scale-tick {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 1px;
+  height: 5px;
+  background: rgba(23, 23, 22, 0.25);
+}
+
+/* Indicator dot */
+.intro-scale-dot {
+  position: absolute;
+  top: 50%;
+  left: 0;               /* overridden by GSAP via x transform */
+  transform: translate(-50%, -50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-black);
+  box-shadow: 0 0 0 2px var(--color-ivory);
+  /* x is driven by GSAP, not CSS */
+}
+
+/* Min / Max labels */
+.intro-scale-range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-body);
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  color: rgba(23, 23, 22, 0.3);
+  user-select: none;
+}
+
+/* Sub-note */
+.intro-scales-note {
+  font-family: var(--font-body);
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(23, 23, 22, 0.3);
+  margin-top: -0.5rem;
+}
+
+/* ─── Right column: image ───────────────────────────────────────────────── */
+
+.intro-image-col {
+  order: 1;
+}
+
+@media (min-width: 768px) {
+  .intro-image-col {
+    order: 2;
+  }
+}
+
+.intro-image-frame {
+  position: relative;
+  width: 100%;
+  /* Aspect ratio box — taller on desktop for architectural portrait feel */
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 2px;
+}
+
+@media (min-width: 768px) {
+  .intro-image-frame {
+    aspect-ratio: 3 / 4;
+    max-height: 72vh;
+  }
+}
+
+/* Both images sit stacked in the same frame */
+.intro-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  will-change: opacity;
+}
+
+.intro-img--2 {
+  /* starts hidden; GSAP controls opacity */
+}
+
+/* ─── Divider fine line below the section (optional) */
+.intro-section::after {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: clamp(1.5rem, 5vw, 5rem);
+  right: clamp(1.5rem, 5vw, 5rem);
+  height: 1px;
+  background: rgba(23, 23, 22, 0.12);
+}
+
 /* ── Explore Cursor ── */
 .explore-cursor {
   position: fixed;
@@ -766,7 +1007,8 @@
 
 .philosophy-section {
   position: relative;
-  min-height: 100vh;
+  min-height: clamp(520px, 78vh, 760px);
+  height: clamp(520px, 78vh, 760px);
   overflow: hidden;
   background: var(--color-cream);
   color: var(--color-black);
@@ -779,7 +1021,7 @@
 
 .philosophy-header {
   position: absolute;
-  top: clamp(2rem, 4vw, 4.5rem);
+  top: clamp(1.5rem, 3vw, 3rem);
   left: clamp(1.5rem, 5vw, 6rem);
   right: clamp(1.5rem, 5vw, 6rem);
   z-index: 5;
@@ -814,7 +1056,8 @@
 .philosophy-stage-container {
   position: relative;
   width: 100%;
-  min-height: 100vh;
+  min-height: 100%;
+  height: 100%;
 }
 
 .philosophy-stage {
@@ -826,7 +1069,8 @@
   justify-content: center;
 
   width: 100%;
-  min-height: 100vh;
+  min-height: 100%;
+  height: 100%;
 
   overflow: hidden;
 }
@@ -1026,87 +1270,87 @@
 
 /* Primary Icons */
 .philosophy-icon--primary {
-  width: clamp(160px, 16vw, 240px);
-  height: clamp(160px, 16vw, 240px);
+  width: clamp(125px, 12vw, 185px);
+  height: clamp(125px, 12vw, 185px);
 }
 
-/* Secondary Icons (Substantially Increased for Clear Readability) */
+/* Secondary Icons */
 .philosophy-icon--secondary {
-  width: clamp(140px, 13.5vw, 200px);
-  height: clamp(140px, 13.5vw, 200px);
+  width: clamp(105px, 10vw, 150px);
+  height: clamp(105px, 10vw, 150px);
 }
 
-/* Tertiary Icons (Substantially Increased for Clear Readability) */
+/* Tertiary Icons */
 .philosophy-icon--tertiary {
-  width: clamp(110px, 10.5vw, 150px);
-  height: clamp(110px, 10.5vw, 150px);
+  width: clamp(85px, 8vw, 120px);
+  height: clamp(85px, 8vw, 120px);
 }
 
 /* Location Stage Icon Placement & Sizing */
 .philosophy-icon--location-1 {
-  top: 13%;
+  top: 18%;
   left: 7%;
 }
 
 .philosophy-icon--location-2 {
-  bottom: 14%;
+  bottom: 21%;
   right: 9%;
-  width: clamp(150px, 14.5vw, 210px);
+  width: clamp(115px, 11vw, 160px);
 }
 
 .philosophy-icon--location-3 {
-  bottom: 20%;
+  bottom: 25%;
   left: 11%;
 }
 
 /* Vision Stage Icon Placement & Sizing */
 .philosophy-icon--vision-1 {
-  top: 22%;
+  top: 24%;
   left: 5%;
-  width: clamp(180px, 17vw, 250px);
+  width: clamp(135px, 13vw, 190px);
 }
 
 .philosophy-icon--vision-2 {
-  top: 13%;
+  top: 18%;
   right: 12%;
 }
 
 .philosophy-icon--vision-3 {
-  bottom: 14%;
+  bottom: 20%;
   right: 7%;
 }
 
 /* Development Stage Icon Placement & Sizing */
 .philosophy-icon--development-1 {
-  top: 9%;
+  top: 16%;
   right: 6%;
-  width: clamp(180px, 17vw, 250px);
+  width: clamp(135px, 13vw, 190px);
 }
 
 .philosophy-icon--development-2 {
-  bottom: 13%;
+  bottom: 19%;
   left: 7%;
 }
 
 .philosophy-icon--development-3 {
-  top: 15%;
+  top: 19%;
   left: 10%;
 }
 
 /* Value Stage Icon Placement & Sizing */
 .philosophy-icon--value-1 {
-  bottom: 9%;
+  bottom: 18%;
   left: 9%;
-  width: clamp(170px, 16vw, 240px);
+  width: clamp(130px, 12vw, 180px);
 }
 
 .philosophy-icon--value-2 {
-  top: 14%;
+  top: 18%;
   right: 11%;
 }
 
 .philosophy-icon--value-3 {
-  bottom: 16%;
+  bottom: 22%;
   right: 12%;
 }
 
@@ -1119,7 +1363,7 @@
   position: absolute;
 
   left: clamp(1.5rem, 5vw, 6rem);
-  bottom: clamp(2rem, 4vw, 4rem);
+  bottom: clamp(1.25rem, 2.5vw, 2.5rem);
 
   z-index: 5;
 
@@ -1142,6 +1386,12 @@
   transition:
     color 0.35s ease,
     transform 0.35s ease;
+
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
 }
 
 .philosophy-progress-item.is-active {
@@ -1172,9 +1422,9 @@
 @media (max-width: 767px) {
   .philosophy-section {
     position: relative;
-    min-height: 100vh;
-    height: auto;
-    overflow: visible;
+    min-height: clamp(460px, 72dvh, 620px);
+    height: clamp(460px, 72dvh, 620px);
+    overflow: hidden;
     padding: 0;
     padding-bottom: 0;
   }
@@ -1183,7 +1433,7 @@
 
   .philosophy-header {
     position: absolute;
-    top: clamp(1.5rem, 4vh, 2.5rem);
+    top: clamp(1.25rem, 3.5vh, 2rem);
     left: clamp(1.25rem, 5vw, 2rem);
     right: clamp(1.25rem, 5vw, 2rem);
     z-index: 5;
@@ -1197,20 +1447,20 @@
   .philosophy-intro {
     margin-top: 0;
     max-width: 16rem;
-    font-size: 0.76rem;
+    font-size: 1.4rem;
     line-height: 1.25;
     text-align: right;
   }
 
  /* ---------------------------------------------------------
-   MOBILE — FULL VIEWPORT STAGE OCCUPANCY
+   MOBILE — STAGE OCCUPANCY
    --------------------------------------------------------- */
 
 .philosophy-stage-container {
   position: relative;
   width: 100%;
-  height: 100dvh;
-  min-height: 100dvh;
+  height: 100%;
+  min-height: 100%;
   display: block;
   padding: 0;
   margin: 0;
@@ -1315,38 +1565,38 @@
   transform: translate(-50%, -50%);
 }
 
-  /* Mobile Icon Sizes — Significantly Larger (~40% increase) */
+  /* Mobile Icon Sizes — Balanced Scale */
   .philosophy-icon--primary {
-    width: clamp(105px, 28vw, 155px);
-    height: clamp(105px, 28vw, 155px);
+    width: clamp(80px, 20vw, 120px);
+    height: clamp(80px, 20vw, 120px);
   }
 
   .philosophy-icon--secondary {
-    width: clamp(85px, 22vw, 125px);
-    height: clamp(85px, 22vw, 125px);
+    width: clamp(65px, 16vw, 98px);
+    height: clamp(65px, 16vw, 98px);
   }
 
   .philosophy-icon--tertiary {
-    width: clamp(68px, 18vw, 100px);
-    height: clamp(68px, 18vw, 100px);
+    width: clamp(52px, 13vw, 78px);
+    height: clamp(52px, 13vw, 78px);
   }
 
-  /* Mobile Icon Placement — Positioned further inward from screen edges */
-  .philosophy-icon--location-1 { top: 9%; left: 1.5rem; }
-  .philosophy-icon--location-2 { bottom: 11%; right: 1.5rem; }
-  .philosophy-icon--location-3 { bottom: 7%; left: 1.75rem; }
+  /* Mobile Icon Placement — Positioned closer to main content */
+  .philosophy-icon--location-1 { top: 14%; left: 1.5rem; }
+  .philosophy-icon--location-2 { bottom: 16%; right: 1.5rem; }
+  .philosophy-icon--location-3 { bottom: 13%; left: 1.75rem; }
 
-  .philosophy-icon--vision-1 { top: 8%; left: 1.4rem; }
-  .philosophy-icon--vision-2 { top: 11%; right: 1.5rem; }
-  .philosophy-icon--vision-3 { bottom: 9%; right: 1.4rem; }
+  .philosophy-icon--vision-1 { top: 13%; left: 1.4rem; }
+  .philosophy-icon--vision-2 { top: 15%; right: 1.5rem; }
+  .philosophy-icon--vision-3 { bottom: 14%; right: 1.4rem; }
 
-  .philosophy-icon--development-1 { top: 8%; right: 1.4rem; }
-  .philosophy-icon--development-2 { bottom: 9%; left: 1.5rem; }
-  .philosophy-icon--development-3 { top: 12%; left: 1.4rem; }
+  .philosophy-icon--development-1 { top: 13%; right: 1.4rem; }
+  .philosophy-icon--development-2 { bottom: 14%; left: 1.5rem; }
+  .philosophy-icon--development-3 { top: 16%; left: 1.4rem; }
 
-  .philosophy-icon--value-1 { bottom: 9%; left: 1.5rem; }
-  .philosophy-icon--value-2 { top: 8%; right: 1.4rem; }
-  .philosophy-icon--value-3 { bottom: 11%; right: 1.6rem; }
+  .philosophy-icon--value-1 { bottom: 14%; left: 1.5rem; }
+  .philosophy-icon--value-2 { top: 13%; right: 1.4rem; }
+  .philosophy-icon--value-3 { bottom: 16%; right: 1.6rem; }
 
   .philosophy-progress {
     display: none;

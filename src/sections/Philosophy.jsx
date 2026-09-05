@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 // Asset imports
 import locationBg from '../assets/images/location/contour-map.svg'
@@ -22,8 +21,6 @@ import valueBg from '../assets/images/value/pillar.png'
 import valueArch from '../assets/images/value/arch-bridge-svgrepo-com.svg'
 import valueGrowth from '../assets/images/value/growth-svgrepo-com.svg'
 import valueGlobe from '../assets/images/value/globe-alt-svgrepo-com.svg'
-
-gsap.registerPlugin(ScrollTrigger)
 
 /* -------------------------------------------------------------------------- */
 /* STAGE DATA                                                                 */
@@ -136,361 +133,225 @@ const philosophyStages = [
   },
 ]
 
+const STAGE_DURATIONS = [5000, 5000, 5000, 5500]
+
 /* -------------------------------------------------------------------------- */
 /* COMPONENT                                                                  */
 /* -------------------------------------------------------------------------- */
 
 export default function Philosophy({ isActive = false }) {
   const sectionRef = useRef(null)
-const stageContainerRef = useRef(null)
-const stageRefs = useRef([])
+  const stageContainerRef = useRef(null)
+  const stageRefs = useRef([])
   const bgRefs = useRef([])
   const iconRefs = useRef([])
+
   const [activeStage, setActiveStage] = useState(0)
+  const [isVisible, setIsVisible] = useState(false)
+
+  const activeStageRef = useRef(0)
+  const timerRef = useRef(null)
+  const tlRef = useRef(null)
+  const isTransitioningRef = useRef(false)
 
   useEffect(() => {
-    const section = sectionRef.current
-const stageContainer = stageContainerRef.current
+    activeStageRef.current = activeStage
+  }, [activeStage])
 
-if (!section || !stageContainer) return
+  // Initial setup on mount: Stage 0 (Location) fully visible & prepared
+  useEffect(() => {
+    const stages = stageRefs.current.filter(Boolean)
+    const bgs = bgRefs.current.filter(Boolean)
 
-    const ctx = gsap.context(() => {
-      const stages = stageRefs.current.filter(Boolean)
-      const isDesktop = window.matchMedia('(min-width: 768px)').matches
+    if (!stages.length) return
 
-      if (isDesktop) {
-        gsap.set(stages, {
-  autoAlpha: 0,
-  y: 20,
-})
-
-gsap.set(stages[0], {
-  autoAlpha: 0,
-  y: 30,
-})
-
-        const allBgs = bgRefs.current.filter(Boolean)
-        gsap.set(allBgs, {
-          autoAlpha: 0,
-          scale: 1.05,
-        })
-
-        const allIcons = iconRefs.current.flat().filter(Boolean)
-        gsap.set(allIcons, {
-          autoAlpha: 0,
-          scale: 0.85,
-        })
-
-// --------------------------------------------------
-// EARLY PHILOSOPHY ENTRY
-// Reveal Location before the section reaches the pin.
-// --------------------------------------------------
-
-const firstStage = stages[0]
-const firstBg = bgRefs.current[0]
-const firstIcons = (iconRefs.current[0] || []).filter(Boolean)
-
-const entryTl = gsap.timeline({
-  scrollTrigger: {
-  trigger: stageContainer,
-  start: 'top 82%',
-  toggleActions: 'play none none reverse',
-},
-})
-
-if (firstBg) {
-  entryTl.to(firstBg, {
-    autoAlpha: 1,
-    scale: 1,
-    duration: 0.7,
-    ease: 'power2.out',
-  })
-}
-
-entryTl.to(
-  firstStage,
-  {
-    autoAlpha: 1,
-    y: 0,
-    duration: 0.65,
-    ease: 'power3.out',
-  },
-  0.08
-)
-
-firstIcons.forEach((iconEl, iconIdx) => {
-  const iconData = philosophyStages[0].icons[iconIdx]
-
-  const fromProps = iconData?.from || {
-    x: 0,
-    y: 30,
-    rotate: 0,
-  }
-
-  entryTl.fromTo(
-    iconEl,
-    {
-      autoAlpha: 0,
-      scale: 0.82,
-      x: fromProps.x * 0.6,
-      y: fromProps.y * 0.6,
-      rotate: fromProps.rotate,
-    },
-    {
-      autoAlpha: 1,
-      scale: 1,
-      x: 0,
-      y: 0,
-      rotate: 0,
-      duration: 0.7,
-      ease: 'power3.out',
-    },
-    0.22 + iconIdx * 0.12
-  )
-})
-
-        // Master Timeline with Overlapping Stages
-        const masterTl = gsap.timeline({
-          scrollTrigger: {
-            id: 'philosophy-pin',
-            trigger: stageContainer,
-            start: 'top top',
-            end: '+=380%',
-            pin: true,
-            scrub: 1,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
-            onUpdate: (self) => {
-              const index = Math.min(
-                philosophyStages.length - 1,
-                Math.floor(self.progress * philosophyStages.length)
-              )
-              setActiveStage(index)
-            },
-          },
-        })
-
-        const STAGE_WINDOW = 3.5
-
-        philosophyStages.forEach((stage, index) => {
-          const stageElement = stages[index]
-          const bgElement = bgRefs.current[index]
-          const stageIcons = (iconRefs.current[index] || []).filter(Boolean)
-
-          const start = index * STAGE_WINDOW
-
-          // 1. Background entrance
-if (bgElement && index !== 0) {
-            masterTl.to(
-              bgElement,
-              {
-                autoAlpha: 1,
-                scale: 1,
-                duration: 0.7,
-                ease: 'power2.out',
-              },
-              start
-            )
-          }
-
-          // 2. Editorial statement entrance
-if (index !== 0) {
-  masterTl.to(
-    stageElement,
-    {
-      autoAlpha: 1,
-      y: 0,
-      duration: 0.6,
-      ease: 'power2.out',
-    },
-    start + 0.1
-  )
-}
-
-          // 3. Foreground Icons entrance
-          stageIcons.forEach((iconEl, iconIdx) => {
-            const iconData = stage.icons[iconIdx]
-            const fromProps = iconData ? iconData.from : { x: 0, y: 30, rotate: 0 }
-            const delayOffset = start + 0.25 + iconIdx * 0.18
-
-            masterTl.fromTo(
-              iconEl,
-              {
-                autoAlpha: 0,
-                scale: 0.82,
-                x: fromProps.x,
-                y: fromProps.y,
-                rotate: fromProps.rotate,
-              },
-              {
-                autoAlpha: 1,
-                scale: 1,
-                x: 0,
-                y: 0,
-                rotate: 0,
-                duration: 0.85,
-                ease: 'power3.out',
-              },
-              delayOffset
-            )
-          })
-
-          // Exit phase for EVERY stage, including the final Value stage.
-          // The final stage must have a terminal exit; otherwise it persists
-          // through the tail of the pin and can look like a second presentation.
-          if (stageElement) {
-            const exitStart = start + 2.5
-
-            // Content recedes
-            masterTl.to(
-              stageElement,
-              {
-                autoAlpha: 0,
-                y: -18,
-                duration: 0.9,
-                ease: 'power2.inOut',
-              },
-              exitStart
-            )
-
-            // Background recedes
-            if (bgElement) {
-              masterTl.to(
-                bgElement,
-                {
-                  autoAlpha: 0,
-                  scale: 0.96,
-                  duration: 0.9,
-                  ease: 'power2.inOut',
-                },
-                exitStart
-              )
-            }
-
-            // Icons disperse
-            stageIcons.forEach((iconEl, iconIdx) => {
-              const iconData = stage.icons[iconIdx]
-              const fromProps = iconData ? iconData.from : { x: 0, y: 30, rotate: 0 }
-
-              masterTl.to(
-                iconEl,
-                {
-                  autoAlpha: 0,
-                  x: fromProps.x * 1.2,
-                  y: fromProps.y * 1.2,
-                  scale: 0.9,
-                  duration: 0.85,
-                  ease: 'power2.inOut',
-                },
-                exitStart + iconIdx * 0.05
-              )
-            })
-          }
-        })
+    stages.forEach((stageEl, i) => {
+      if (i === 0) {
+        gsap.set(stageEl, { autoAlpha: 1, y: 0 })
       } else {
-  // --------------------------------------------------
-  // MOBILE — PINNED SCENE TRANSITIONS
-  // --------------------------------------------------
-
-  // 1. Initial State Setup
-  // Stage 0 (Location) is preloaded fully visible and focused.
-  // Stages 1..3 (Vision, Development, Value) start hidden.
-  stages.forEach((stageEl, i) => {
-    if (i === 0) {
-      gsap.set(stageEl, { autoAlpha: 1, y: 0 })
-    } else {
-      gsap.set(stageEl, { autoAlpha: 0, y: 20 })
-    }
-  })
-
-  bgRefs.current.forEach((bgEl, i) => {
-    if (!bgEl) return
-    if (i === 0) {
-      gsap.set(bgEl, { autoAlpha: 1, scale: 1 })
-    } else {
-      gsap.set(bgEl, { autoAlpha: 0, scale: 1.05 })
-    }
-  })
-
-  iconRefs.current.forEach((stageIconList, stageIdx) => {
-    const icons = (stageIconList || []).filter(Boolean)
-    icons.forEach((iconEl) => {
-      if (stageIdx === 0) {
-        gsap.set(iconEl, { autoAlpha: 1, scale: 1, x: 0, y: 0, rotate: 0 })
-      } else {
-        gsap.set(iconEl, { autoAlpha: 0, scale: 0.85 })
+        gsap.set(stageEl, { autoAlpha: 0, y: 20 })
       }
     })
-  })
 
-  const mobileTl = gsap.timeline({
-    scrollTrigger: {
-      id: 'philosophy-pin',
-      trigger: stageContainer,
-      start: 'top top',
-      end: '+=210%',
-      pin: true,
-      scrub: 1,
-      anticipatePin: 1,
-      invalidateOnRefresh: true,
-      onUpdate: (self) => {
-        const index = Math.min(
-          philosophyStages.length - 1,
-          Math.floor(
-            self.progress * philosophyStages.length
-          )
-        )
-        setActiveStage(index)
+    bgs.forEach((bgEl, i) => {
+      if (!bgEl) return
+      if (i === 0) {
+        gsap.set(bgEl, { autoAlpha: 1, scale: 1 })
+      } else {
+        gsap.set(bgEl, { autoAlpha: 0, scale: 1.05 })
+      }
+    })
+
+    iconRefs.current.forEach((stageIconList, stageIdx) => {
+      const icons = (stageIconList || []).filter(Boolean)
+      icons.forEach((iconEl, iconIdx) => {
+        if (stageIdx === 0) {
+          gsap.set(iconEl, { autoAlpha: 1, scale: 1, x: 0, y: 0, rotate: 0 })
+        } else {
+          const iconData = philosophyStages[stageIdx]?.icons[iconIdx]
+          const fromProps = iconData?.from || { x: 0, y: 30, rotate: 0 }
+          gsap.set(iconEl, {
+            autoAlpha: 0,
+            scale: 0.82,
+            x: fromProps.x,
+            y: fromProps.y,
+            rotate: fromProps.rotate,
+          })
+        }
+      })
+    })
+
+    return () => {
+      if (tlRef.current) tlRef.current.kill()
+      if (timerRef.current) clearTimeout(timerRef.current)
+    }
+  }, [])
+
+  // Observe section visibility (pause off-screen, resume when visible)
+  useEffect(() => {
+    const sectionEl = sectionRef.current
+    if (!sectionEl) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          setIsVisible(entry.isIntersecting)
+        })
       },
-    },
-  })
+      { threshold: 0.25 }
+    )
 
-  const STAGE_WINDOW = 2.4
+    observer.observe(sectionEl)
 
-  philosophyStages.forEach((stage, index) => {
-    const stageElement = stages[index]
-    const bgElement = bgRefs.current[index]
-    const stageIcons = (iconRefs.current[index] || []).filter(Boolean)
-    const start = index * STAGE_WINDOW
-
-    // Background Enter (for Vision, Development, Value)
-    if (bgElement && index !== 0) {
-      mobileTl.to(
-        bgElement,
-        {
-          autoAlpha: 1,
-          scale: 1,
-          duration: 0.7,
-          ease: 'power2.out',
-        },
-        start
-      )
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setIsVisible(false)
+      } else if (sectionEl) {
+        const rect = sectionEl.getBoundingClientRect()
+        const vh = window.innerHeight
+        const visibleHeight = Math.max(
+          0,
+          Math.min(rect.bottom, vh) - Math.max(rect.top, 0)
+        )
+        setIsVisible(visibleHeight / rect.height >= 0.25)
+      }
     }
 
-    // Stage Content Enter (for Vision, Development, Value)
-    if (index !== 0) {
-      mobileTl.to(
-        stageElement,
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      observer.disconnect()
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [])
+
+  // Stage transition logic using GSAP timeline
+  const transitionToStage = (fromIdx, toIdx) => {
+    const stages = stageRefs.current.filter(Boolean)
+    const bgs = bgRefs.current.filter(Boolean)
+
+    const fromStageEl = stages[fromIdx]
+    const fromBgEl = bgs[fromIdx]
+    const fromIcons = (iconRefs.current[fromIdx] || []).filter(Boolean)
+
+    const toStageEl = stages[toIdx]
+    const toBgEl = bgs[toIdx]
+    const toIcons = (iconRefs.current[toIdx] || []).filter(Boolean)
+
+    if (tlRef.current) {
+      tlRef.current.kill()
+    }
+
+    isTransitioningRef.current = true
+
+    const tl = gsap.timeline({
+      onComplete: () => {
+        isTransitioningRef.current = false
+        setActiveStage(toIdx)
+        activeStageRef.current = toIdx
+      },
+    })
+    tlRef.current = tl
+
+    // Exit phase for current stage (fromIdx)
+    if (fromStageEl && fromIdx !== toIdx) {
+      tl.to(
+        fromStageEl,
+        {
+          autoAlpha: 0,
+          y: -18,
+          duration: 0.6,
+          ease: 'power2.inOut',
+        },
+        0
+      )
+
+      if (fromBgEl) {
+        tl.to(
+          fromBgEl,
+          {
+            autoAlpha: 0,
+            scale: 0.96,
+            duration: 0.6,
+            ease: 'power2.inOut',
+          },
+          0
+        )
+      }
+
+      fromIcons.forEach((iconEl, iconIdx) => {
+        const iconData = philosophyStages[fromIdx]?.icons[iconIdx]
+        const fromProps = iconData?.from || { x: 0, y: 30, rotate: 0 }
+        tl.to(
+          iconEl,
+          {
+            autoAlpha: 0,
+            x: fromProps.x * 1.2,
+            y: fromProps.y * 1.2,
+            scale: 0.9,
+            duration: 0.55,
+            ease: 'power2.inOut',
+          },
+          0 + iconIdx * 0.04
+        )
+      })
+    }
+
+    // Entrance phase for target stage (toIdx)
+    if (toStageEl) {
+      const enterStart = fromIdx !== toIdx ? 0.22 : 0
+
+      if (toBgEl) {
+        tl.fromTo(
+          toBgEl,
+          { autoAlpha: 0, scale: 1.05 },
+          {
+            autoAlpha: 1,
+            scale: 1,
+            duration: 0.7,
+            ease: 'power2.out',
+          },
+          enterStart
+        )
+      }
+
+      tl.fromTo(
+        toStageEl,
+        { autoAlpha: 0, y: 20 },
         {
           autoAlpha: 1,
           y: 0,
-          duration: 0.6,
-          ease: 'power2.out',
+          duration: 0.65,
+          ease: 'power3.out',
         },
-        start + 0.1
+        enterStart + 0.08
       )
-    }
 
-    // Icon Enter (for Vision, Development, Value)
-    if (index !== 0) {
-      stageIcons.forEach((iconEl, iconIdx) => {
-        const iconData = stage.icons[iconIdx]
-        const fromProps = iconData
-          ? iconData.from
-          : { x: 0, y: 30, rotate: 0 }
-        const delayOffset = start + 0.25 + iconIdx * 0.18
+      toIcons.forEach((iconEl, iconIdx) => {
+        const iconData = philosophyStages[toIdx]?.icons[iconIdx]
+        const fromProps = iconData?.from || { x: 0, y: 30, rotate: 0 }
 
-        mobileTl.fromTo(
+        tl.fromTo(
           iconEl,
           {
             autoAlpha: 0,
@@ -505,72 +366,53 @@ if (index !== 0) {
             x: 0,
             y: 0,
             rotate: 0,
-            duration: 0.85,
+            duration: 0.75,
             ease: 'power3.out',
           },
-          delayOffset
+          enterStart + 0.15 + iconIdx * 0.1
         )
       })
     }
+  }
 
-    // Exits for stages 0, 1, 2 (Location, Vision, Development).
-    // The final Value (04) stage remains visually active and stable until Philosophy section completes.
-    if (stageElement && index < philosophyStages.length - 1) {
-      const exitStart = start + 1.8
-
-      // Content exits
-      mobileTl.to(
-        stageElement,
-        {
-          autoAlpha: 0,
-          y: -18,
-          duration: 0.9,
-          ease: 'power2.inOut',
-        },
-        exitStart
-      )
-
-      // Background exits
-      if (bgElement) {
-        mobileTl.to(
-          bgElement,
-          {
-            autoAlpha: 0,
-            scale: 0.96,
-            duration: 0.9,
-            ease: 'power2.inOut',
-          },
-          exitStart
-        )
+  // Automatic progression loop
+  useEffect(() => {
+    if (!isVisible) {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+        timerRef.current = null
       }
-
-      // Icons exit
-      stageIcons.forEach((iconEl, iconIdx) => {
-        const iconData = stage.icons[iconIdx]
-        const fromProps = iconData
-          ? iconData.from
-          : { x: 0, y: 30, rotate: 0 }
-
-        mobileTl.to(
-          iconEl,
-          {
-            autoAlpha: 0,
-            x: fromProps.x * 1.2,
-            y: fromProps.y * 1.2,
-            scale: 0.9,
-            duration: 0.85,
-            ease: 'power2.inOut',
-          },
-          exitStart + iconIdx * 0.05
-        )
-      })
+      return
     }
-  })
-}
-    }, section)
 
-    return () => ctx.revert()
-  }, [])
+    const currentIdx = activeStage
+    const duration = STAGE_DURATIONS[currentIdx] || 5000
+
+    timerRef.current = setTimeout(() => {
+      const nextIdx = (currentIdx + 1) % philosophyStages.length
+      transitionToStage(currentIdx, nextIdx)
+    }, duration)
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+        timerRef.current = null
+      }
+    }
+  }, [isVisible, activeStage])
+
+  // Manual stage selection handler
+  const handleStageClick = (targetIdx) => {
+    if (targetIdx === activeStageRef.current && !isTransitioningRef.current) return
+
+    if (timerRef.current) {
+      clearTimeout(timerRef.current)
+      timerRef.current = null
+    }
+
+    const currentIdx = activeStageRef.current
+    transitionToStage(currentIdx, targetIdx)
+  }
 
   return (
     <section
@@ -580,18 +422,17 @@ if (index !== 0) {
     >
       {/* HEADER */}
       <div className="philosophy-header">
-        <span className="philosophy-eyebrow">OUR PHILOSOPHY</span>
+        <span className="philosophy-eyebrow intro-eyebrow eyebrow ">OUR PHILOSOPHY</span>
         <p className="philosophy-intro">
-          A considered approach to identifying opportunity, shaping possibility and
-          creating lasting value.
+         Where Potential Begins.
         </p>
       </div>
 
       {/* DESKTOP / MOBILE STAGES */}
       <div
-  ref={stageContainerRef}
-  className="philosophy-stage-container"
->
+        ref={stageContainerRef}
+        className="philosophy-stage-container"
+      >
         {philosophyStages.map((stage, stageIndex) => (
           <article
             key={stage.id}
@@ -652,14 +493,17 @@ if (index !== 0) {
       {/* PROGRESS */}
       <div className="philosophy-progress">
         {philosophyStages.map((stage, index) => (
-          <span
+          <button
+            type="button"
             key={stage.id}
+            onClick={() => handleStageClick(index)}
             className={`philosophy-progress-item ${
               activeStage === index ? 'is-active' : ''
             }`}
+            aria-label={`Go to stage ${stage.number}: ${stage.title}`}
           >
             {stage.number}
-          </span>
+          </button>
         ))}
       </div>
     </section>

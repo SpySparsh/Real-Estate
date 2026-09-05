@@ -16,8 +16,11 @@ const [isTransitioning, setIsTransitioning] = useState(false)
   const nextImageRef = useRef(null)
   const contentRef = useRef(null)
   const transitionTimeoutRef = useRef(null)
+  const autoplayTimerRef = useRef(null)
+  const isHoveredRef = useRef(false)
+  const isDraggingRef = useRef(false)
   const touchStartX = useRef(0)
-const touchStartY = useRef(0)
+  const touchStartY = useRef(0)
 
   const currentPartner = partners[activeIndex]
 
@@ -37,33 +40,37 @@ const touchStartY = useRef(0)
     handleSelectPartner(newIndex)
   }
 
-  const handleTouchStart = (event) => {
-  touchStartX.current = event.touches[0].clientX
-  touchStartY.current = event.touches[0].clientY
-}
-
-const handleTouchEnd = (event) => {
-  if (isTransitioning) return
-
-  const touchEndX = event.changedTouches[0].clientX
-  const touchEndY = event.changedTouches[0].clientY
-
-  const deltaX = touchEndX - touchStartX.current
-  const deltaY = touchEndY - touchStartY.current
-
-  // Ignore gestures that are primarily vertical.
-  if (Math.abs(deltaY) >= Math.abs(deltaX)) return
-
-  const swipeThreshold = 50
-
-  if (Math.abs(deltaX) < swipeThreshold) return
-
-  if (deltaX < 0) {
-    handleNext()
-  } else {
-    handlePrevious()
+  const handlePointerDown = (event) => {
+    isDraggingRef.current = true
+    touchStartX.current = event.clientX || (event.touches && event.touches[0].clientX)
+    touchStartY.current = event.clientY || (event.touches && event.touches[0].clientY)
   }
-}
+
+  const handlePointerUp = (event) => {
+    isDraggingRef.current = false
+    if (isTransitioning) return
+
+    const touchEndX = event.clientX || (event.changedTouches && event.changedTouches[0].clientX)
+    const touchEndY = event.clientY || (event.changedTouches && event.changedTouches[0].clientY)
+    
+    if (touchEndX === undefined || touchStartX.current === undefined) return
+
+    const deltaX = touchEndX - touchStartX.current
+    const deltaY = touchEndY - touchStartY.current
+
+    // Ignore gestures that are primarily vertical.
+    if (Math.abs(deltaY) >= Math.abs(deltaX)) return
+
+    const swipeThreshold = 50
+
+    if (Math.abs(deltaX) < swipeThreshold) return
+
+    if (deltaX < 0) {
+      handleNext()
+    } else {
+      handlePrevious()
+    }
+  }
 
   const transitionToPartner = (newIndex) => {
     if (isTransitioning) return
@@ -100,7 +107,7 @@ const handleTouchEnd = (event) => {
     gsap.to(oldImage, {
       opacity: 0,
       x: 30,
-      duration: 0.45,
+      duration: 0.75,
       ease: 'power2.inOut',
     })
 
@@ -108,7 +115,7 @@ const handleTouchEnd = (event) => {
       gsap.to(content, {
         opacity: 0,
         y: 16,
-        duration: 0.35,
+        duration: 0.65,
         ease: 'power2.inOut',
       })
     }
@@ -118,9 +125,9 @@ const handleTouchEnd = (event) => {
     gsap.to(newImage, {
       opacity: 1,
       x: 0,
-      duration: 0.55,
+      duration: 0.85,
       ease: 'power2.inOut',
-      delay: 0.08,
+      delay: 0.1,
     })
 
     // Set the new active partner
@@ -133,7 +140,7 @@ const handleTouchEnd = (event) => {
         gsap.to(content, {
           opacity: 1,
           y: 0,
-          duration: 0.45,
+          duration: 0.75,
           ease: 'power2.out',
           delay: 0.1,
         })
@@ -141,10 +148,10 @@ const handleTouchEnd = (event) => {
 
       // Mark transition as complete
       transitionTimeoutRef.current = setTimeout(() => {
-  setIncomingIndex(null)
-  setIsTransitioning(false)
-}, 550)
-    }, 280)
+        setIncomingIndex(null)
+        setIsTransitioning(false)
+      }, 850)
+    }, 450)
   }
 
   // Entrance animation on mount
@@ -196,11 +203,41 @@ const handleTouchEnd = (event) => {
     })
   }, { scope: containerRef })
 
+  // Autoplay logic
+  const startAutoplay = () => {
+    clearTimeout(autoplayTimerRef.current)
+    autoplayTimerRef.current = setTimeout(() => {
+      if (!isHoveredRef.current && !isDraggingRef.current && !isTransitioning) {
+        handleNext()
+      } else {
+        startAutoplay() // Retry
+      }
+    }, 5000)
+  }
+
+  useEffect(() => {
+    startAutoplay()
+    return () => clearTimeout(autoplayTimerRef.current)
+  }, [activeIndex, isTransitioning])
+
+  const handleMouseEnter = () => {
+    isHoveredRef.current = true
+    clearTimeout(autoplayTimerRef.current)
+  }
+
+  const handleMouseLeave = () => {
+    isHoveredRef.current = false
+    startAutoplay()
+  }
+
   // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (transitionTimeoutRef.current) {
         clearTimeout(transitionTimeoutRef.current)
+      }
+      if (autoplayTimerRef.current) {
+        clearTimeout(autoplayTimerRef.current)
       }
     }
   }, [])
@@ -223,7 +260,13 @@ const handleTouchEnd = (event) => {
           </div>
 
           {/* Main presentation stage */}
-          <div className="partners-stage grid grid-cols-2 gap-16 items-center">
+          <div 
+            className="partners-stage grid grid-cols-2 gap-16 items-center select-none"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+          >
             {/* Left: Partner information */}
             <div ref={contentRef} className="flex flex-col space-y-6">
               {/* Partner counter */}
@@ -362,64 +405,69 @@ const handleTouchEnd = (event) => {
             </span>
           </div>
 
-          {/* Image stage */}
-          <div
-  className="partners-stage relative w-full h-[300px] sm:h-[360px] rounded-2xl overflow-hidden bg-neutral/5 border border-neutral/20 mb-6 touch-pan-y"
-  onTouchStart={handleTouchStart}
-  onTouchEnd={handleTouchEnd}
->
-            <img
-            ref={currentImageRef}
-            src={currentPartner.image}
-            alt={currentPartner.name}
-            className="partner-stage-image relative z-10 w-full h-full object-cover object-center"
-            />
+          {/* Swipeable container for mobile */}
+          <div 
+            className="mobile-swipe-area select-none"
+            onPointerDown={handlePointerDown}
+            onPointerUp={handlePointerUp}
+          >
+            {/* Image stage */}
+            <div
+              className="partners-stage relative w-full h-[300px] sm:h-[360px] rounded-2xl overflow-hidden bg-neutral/5 border border-neutral/20 mb-6 touch-pan-y"
+            >
+              <img
+              ref={currentImageRef}
+              src={currentPartner.image}
+              alt={currentPartner.name}
+              className="partner-stage-image relative z-10 w-full h-full object-cover object-center"
+              />
 
-            <img
-  ref={nextImageRef}
- src={
-  partners[
-    incomingIndex !== null
-      ? incomingIndex
-      : activeIndex
-  ].image
-}
-  alt=""
-  aria-hidden="true"
-  className="partner-stage-image-next absolute inset-0 z-0 w-full h-full object-cover object-center opacity-0 pointer-events-none"
-/>
-          </div>
-
-          {/* Partner content */}
-          <div ref={contentRef} className="space-y-4 mb-8">
-            <div>
-              <h3 className="font-display text-2xl sm:text-3xl text-black leading-tight mb-2">
-                {currentPartner.name}
-              </h3>
-              <p className="font-body text-xs tracking-[0.15em] uppercase text-accent font-medium">
-                {currentPartner.role}
-              </p>
+              <img
+    ref={nextImageRef}
+   src={
+    partners[
+      incomingIndex !== null
+        ? incomingIndex
+        : activeIndex
+    ].image
+  }
+    alt=""
+    aria-hidden="true"
+    className="partner-stage-image-next absolute inset-0 z-0 w-full h-full object-cover object-center opacity-0 pointer-events-none"
+  />
             </div>
 
-            <p className="font-body text-xs tracking-[0.18em] uppercase text-neutral/70">
-              {currentPartner.focus}
-            </p>
+            {/* Partner content */}
+            <div ref={contentRef} className="space-y-4 mb-8">
+              <div>
+                <h3 className="font-display text-2xl sm:text-3xl text-black leading-tight mb-2">
+                  {currentPartner.name}
+                </h3>
+                <p className="font-body text-xs tracking-[0.15em] uppercase text-accent font-medium">
+                  {currentPartner.role}
+                </p>
+              </div>
 
-            <p className="body-copy text-sm leading-relaxed">
-              {currentPartner.description}
-            </p>
+              <p className="font-body text-xs tracking-[0.18em] uppercase text-neutral/70">
+                {currentPartner.focus}
+              </p>
 
-            {/* Qualities */}
-            <ul className="flex flex-wrap gap-2 pt-2">
-              {currentPartner.qualities.map((quality) => (
-                <li
-                  key={quality}
-                  className="rounded-full border border-neutral/30 bg-ivory px-2.5 py-1 text-[10px] font-medium tracking-[0.1em] uppercase text-black/70"
-                >
-                  {quality}
-                </li>
-              ))}
-            </ul>
+              <p className="body-copy text-sm leading-relaxed">
+                {currentPartner.description}
+              </p>
+
+              {/* Qualities */}
+              <ul className="flex flex-wrap gap-2 pt-2">
+                {currentPartner.qualities.map((quality) => (
+                  <li
+                    key={quality}
+                    className="rounded-full border border-neutral/30 bg-ivory px-2.5 py-1 text-[10px] font-medium tracking-[0.1em] uppercase text-black/70"
+                  >
+                    {quality}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           {/* Navigation controls */}

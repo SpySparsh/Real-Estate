@@ -2,10 +2,12 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { projects } from '../data/siteData'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { CustomEase } from 'gsap/CustomEase'
 import { useGSAP } from '@gsap/react'
 import { getPostPhilosophyStart } from '../utils/animations'
 
-gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(ScrollTrigger, CustomEase)
+CustomEase.create('premiumReveal', '0.22, 1, 0.36, 1')
 
 const INACTIVE_PROJECT_FILTER = 'grayscale(1) brightness(0.85)'
 const ACTIVE_PROJECT_FILTER = 'grayscale(0) brightness(1)'
@@ -314,12 +316,13 @@ const view = isDesktop
     mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
       const cleanupFns = []
 
+      // Section intro text — appears first, leading the reveal
       gsap.from('.projects-intro-text', {
         opacity: 0,
-        y: 30,
-        duration: 1,
-        stagger: 0.15,
-        ease: 'power3.out',
+        y: 22,
+        duration: 1.1,
+        stagger: 0.14,
+        ease: 'power2.out',
         scrollTrigger: {
           id: 'projects-intro',
           trigger: '.projects-intro',
@@ -339,12 +342,13 @@ const view = isDesktop
         const numberEl = article.querySelector('.project-chapter-number')
         const mediaNav = article.querySelector('.project-media-nav')
 
+        // Chapter number — rises gently from below, leads the article
         if (numberEl) {
           gsap.from(numberEl, {
             yPercent: 100,
             opacity: 0,
-            duration: 1,
-            ease: 'power4.out',
+            duration: 1.1,
+            ease: 'power3.out',
             scrollTrigger: {
               id: `projects-desktop-number-${index}`,
               trigger: article,
@@ -355,6 +359,7 @@ const view = isDesktop
           })
         }
 
+        // Curtain wipe + image scale — the primary cinematic moment
         if (curtain && imageWrapper) {
           const curtainTl = gsap.timeline({
             scrollTrigger: {
@@ -366,28 +371,37 @@ const view = isDesktop
             }
           })
 
-          curtainTl.to(curtain, {
-            yPercent: -100,
-            duration: 1.4,
-            ease: 'power3.inOut',
-          }).from(image, {
-            scale: 1.15,
-            duration: 2,
-            ease: 'power2.out',
-          }, '-=1.4')
+          curtainTl
+            .to(curtain, {
+              yPercent: -100,
+              duration: 1.6,           // slower wipe
+              ease: 'power2.inOut',    // controlled, no sharp stop
+            })
+            .fromTo(image, 
+              { scale: 0.96, opacity: 0, y: 12 },
+              {
+                scale: 1,
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                ease: 'premiumReveal',
+              },
+              '-=1.2'
+            )
         }
 
         if (image) {
           gsap.set(image, { filter: 'grayscale(1) brightness(0.85)' })
         }
 
+        // Meta labels — follow the image, gentle stagger
         if (metaEls.length) {
           gsap.from(metaEls, {
             opacity: 0,
-            y: 20,
-            duration: 0.7,
+            y: 14,
+            duration: 0.95,
             stagger: 0.1,
-            ease: 'power3.out',
+            ease: 'power2.out',
             scrollTrigger: {
               id: `projects-desktop-meta-${index}`,
               trigger: article,
@@ -398,12 +412,13 @@ const view = isDesktop
           })
         }
 
+        // Description — settles in last after meta
         if (descEl) {
           gsap.from(descEl, {
             opacity: 0,
-            y: 20,
-            duration: 0.8,
-            ease: 'power3.out',
+            y: 14,
+            duration: 1.0,
+            ease: 'power2.out',
             scrollTrigger: {
               id: `projects-desktop-desc-${index}`,
               trigger: descEl,
@@ -414,12 +429,13 @@ const view = isDesktop
           })
         }
 
+        // Media nav — smallest detail, last to arrive
         if (mediaNav) {
           gsap.from(mediaNav, {
             opacity: 0,
-            y: 10,
-            duration: 0.6,
-            ease: 'power3.out',
+            y: 8,
+            duration: 0.85,
+            ease: 'power2.out',
             scrollTrigger: {
               id: `projects-desktop-nav-${index}`,
               trigger: mediaNav,
@@ -498,11 +514,12 @@ const view = isDesktop
         const numberEl = article.querySelector('.project-chapter-number')
         const metaEls = article.querySelectorAll('.project-meta')
 
+        // Chapter number — gentle upward reveal
         if (numberEl) {
           gsap.from(numberEl, {
             yPercent: 80,
             opacity: 0,
-            duration: 0.8,
+            duration: 1.0,
             ease: 'power3.out',
             scrollTrigger: {
               id: `projects-mobile-number-${index}`,
@@ -514,13 +531,14 @@ const view = isDesktop
           })
         }
 
+        // Meta — slightly after number, subtle stagger
         if (metaEls.length) {
           gsap.from(metaEls, {
             opacity: 0,
-            y: 18,
-            duration: 0.6,
-            stagger: 0.08,
-            ease: 'power3.out',
+            y: 12,
+            duration: 0.9,
+            stagger: 0.09,
+            ease: 'power2.out',
             scrollTrigger: {
               id: `projects-mobile-meta-${index}`,
               trigger: article,
@@ -531,22 +549,41 @@ const view = isDesktop
           })
         }
 
+        // Curtain wipe — primary cinematic moment on mobile
         if (curtain && imageWrapper) {
-          gsap.fromTo(curtain,
+          const mobileImage = article.querySelector('.project-mobile-image-inner .project-image')
+          const curtainTl = gsap.timeline({
+            scrollTrigger: {
+              id: `projects-mobile-curtain-${index}`,
+              trigger: imageWrapper,
+              start: getPostPhilosophyStart('top 75%'),
+              toggleActions: 'play none none none',
+              invalidateOnRefresh: true,
+            }
+          })
+
+          curtainTl.fromTo(curtain,
             { yPercent: 0 },
             {
               yPercent: -100,
-              duration: 1.05,
-              ease: 'power3.inOut',
-              scrollTrigger: {
-                id: `projects-mobile-curtain-${index}`,
-                trigger: imageWrapper,
-                start: getPostPhilosophyStart('top 75%'),
-                toggleActions: 'play none none none',
-                invalidateOnRefresh: true,
-              }
+              duration: 1.5,           // slower, more deliberate wipe
+              ease: 'power2.inOut',    // controlled without sharp stop
             }
           )
+          
+          if (mobileImage) {
+            curtainTl.fromTo(mobileImage,
+              { scale: 0.96, opacity: 0, y: 12 },
+              {
+                scale: 1,
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                ease: 'premiumReveal',
+              },
+              '-=1.1'
+            )
+          }
         }
 
         article.querySelectorAll('.project-image').forEach((imageEl) => {
@@ -586,13 +623,14 @@ const view = isDesktop
           }, 0)
         }
 
+        // Description — last to settle in
         const descEl = article.querySelector('.project-mobile-desc')
         if (descEl) {
           gsap.from(descEl, {
             opacity: 0,
-            y: 20,
-            duration: 0.7,
-            ease: 'power3.out',
+            y: 14,
+            duration: 0.95,
+            ease: 'power2.out',
             scrollTrigger: {
               id: `projects-mobile-desc-${index}`,
               trigger: descEl,

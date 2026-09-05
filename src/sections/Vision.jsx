@@ -2,10 +2,12 @@ import { useRef } from 'react'
 import { vision } from '../data/siteData'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { CustomEase } from 'gsap/CustomEase'
 import { useGSAP } from '@gsap/react'
 import { getPostPhilosophyStart } from '../utils/animations'
 
-gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(ScrollTrigger, CustomEase)
+CustomEase.create('premiumReveal', '0.22, 1, 0.36, 1')
 
 function Vision() {
   const containerRef = useRef(null)
@@ -47,6 +49,27 @@ function Vision() {
           }
         })
       })
+
+      const imageInner = containerRef.current?.querySelector('.vision-image-inner')
+      if (imageInner) {
+        gsap.fromTo(imageInner,
+          { scale: 0.96, opacity: 0, y: 12 },
+          {
+            scale: 1,
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'premiumReveal',
+            scrollTrigger: {
+              id: 'vision-desktop-reveal',
+              trigger: '.vision-image',
+              start: getPostPhilosophyStart('top 75%'),
+              toggleActions: 'play none none none',
+              invalidateOnRefresh: true,
+            }
+          }
+        )
+      }
 
       const imageEl = containerRef.current?.querySelector('.vision-image img')
       if (imageEl) {
@@ -157,21 +180,38 @@ function Vision() {
       }
 
       if (imageWrapper && curtain) {
-        gsap.fromTo(curtain,
+        const curtainTl = gsap.timeline({
+          scrollTrigger: {
+            id: 'vision-mobile-curtain',
+            trigger: imageWrapper,
+            start: getPostPhilosophyStart('top 75%'),
+            toggleActions: 'play none none none',
+            invalidateOnRefresh: true,
+          }
+        })
+
+        curtainTl.fromTo(curtain,
           { yPercent: 0 },
           {
             yPercent: -100,
             duration: 1.05,
             ease: 'power3.inOut',
-            scrollTrigger: {
-              id: 'vision-mobile-curtain',
-              trigger: imageWrapper,
-              start: getPostPhilosophyStart('top 75%'),
-              toggleActions: 'play none none none',
-              invalidateOnRefresh: true,
-            }
           }
         )
+        
+        if (imageInner) {
+          curtainTl.fromTo(imageInner,
+            { scale: 0.96, opacity: 0, y: 12 },
+            {
+              scale: 1,
+              opacity: 1,
+              y: 0,
+              duration: 0.8,
+              ease: 'premiumReveal',
+            },
+            '-=0.75'
+          )
+        }
       }
 
       if (imageWrapper && imageInner) {
