@@ -4,11 +4,13 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { getPostPhilosophyStart } from '../utils/animations'
+import { useTranslation } from '../hooks/useTranslation'
 
 gsap.registerPlugin(ScrollTrigger)
 
 function ClosingCTA() {
   const containerRef = useRef(null)
+  const { tArray } = useTranslation()
 
   useGSAP(() => {
     const mm = gsap.matchMedia()
@@ -102,7 +104,7 @@ function ClosingCTA() {
       <div className="container-base text-center">
         {/* Large Statement */}
         <div className="mb-12 md:mb-16">
-          {closingCTA.statement.map((line, index) => (
+          {tArray('closingCTA.statementLines').map((line, index) => (
             <div key={index} className="overflow-hidden pb-1 md:pb-2">
               <h2
                 className="cta-headline display-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl"
@@ -116,7 +118,7 @@ function ClosingCTA() {
         {/* Fine Divider */}
         <div className="cta-divider w-24 h-px bg-current opacity-30 mx-auto mb-8" />
 
-        {/* Subtext */}
+        {/* Subtext — brand name, NOT translated */}
         <p className="cta-subtext eyebrow text-current opacity-50">
           Shri Radhika Developers
         </p>

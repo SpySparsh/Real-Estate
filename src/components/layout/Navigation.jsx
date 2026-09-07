@@ -1,13 +1,17 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { company, navigation } from '../../data/siteData'
 import logoIcon from '../../assets/logo-icon.png'
+import { useTranslation } from '../../hooks/useTranslation'
 
 function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
+  const [isLangPanelOpen, setIsLangPanelOpen] = useState(false)
   const navRef = useRef(null)
   const scrollLockYRef = useRef(0)
+  const langBtnRef = useRef(null)
+  const { language, setLanguage, t } = useTranslation()
 
   // ── Scroll state + active section tracking ──
   useEffect(() => {
@@ -82,6 +86,29 @@ function Navigation() {
     }
   }, [isMenuOpen])
 
+  // Close language panel on outside click or Escape
+  useEffect(() => {
+    if (!isLangPanelOpen) return
+
+    const handleOutside = (e) => {
+      if (langBtnRef.current && !langBtnRef.current.contains(e.target)) {
+        setIsLangPanelOpen(false)
+      }
+    }
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') setIsLangPanelOpen(false)
+    }
+
+    document.addEventListener('mousedown', handleOutside)
+    document.addEventListener('touchstart', handleOutside)
+    document.addEventListener('keydown', handleEscape)
+    return () => {
+      document.removeEventListener('mousedown', handleOutside)
+      document.removeEventListener('touchstart', handleOutside)
+      document.removeEventListener('keydown', handleEscape)
+    }
+  }, [isLangPanelOpen])
+
   return (
     <>
       <header
@@ -110,7 +137,7 @@ function Navigation() {
             <span className="h-4 sm:h-4.5 md:h-5.5 w-px bg-[#242424]/20 inline-block shrink-0" />
 
             {/* Company Name */}
-            <span className="font-body text-[10px] sm:text-xs md:text-sm tracking-[0.18em] sm:tracking-[0.22em] md:tracking-[0.25em] uppercase font-medium text-[#242424] whitespace-nowrap">
+            <span className="font-body text-[10px] sm:text-sm md:text-sm tracking-[0.18em] sm:tracking-[0.22em] md:tracking-[0.25em] uppercase font-medium text-[#242424] whitespace-nowrap">
               {company.name}
             </span>
           </a>
@@ -122,7 +149,7 @@ function Navigation() {
                 <a
                   href={`#${item.target}`}
                   onClick={(e) => handleNavClick(e, item.target)}
-                  className={`font-body text-xs tracking-[0.15em] uppercase transition-all duration-300 rounded-sm relative
+                  className={`font-body text-sm tracking-[0.15em] uppercase transition-all duration-300 rounded-sm relative
                     group-hover:opacity-50 hover:!opacity-100
                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#242424]/20 focus-visible:ring-offset-4
                     ${activeSection === item.target
@@ -131,7 +158,7 @@ function Navigation() {
                     }
                   `}
                 >
-                  {item.label}
+                  {t(`navigation.${item.target}`)}
                   {/* Active indicator line */}
                   <span
                     className={`absolute -bottom-1 left-0 h-px bg-[#242424] transition-all duration-500 ease-out ${
@@ -143,16 +170,100 @@ function Navigation() {
             ))}
           </ul>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="reveal-nav md:hidden font-body text-xs tracking-[0.15em] uppercase text-[#242424] z-50 relative p-2 -mr-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#242424]/20 rounded-sm transition-all font-medium"
-            onClick={toggleMenu}
-            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-            aria-expanded={isMenuOpen}
-            aria-controls="mobile-menu"
-          >
-            {isMenuOpen ? 'Close' : 'Explore'}
-          </button>
+          {/* Desktop Language Switcher */}
+          <div className="reveal-nav hidden md:flex items-center gap-2" aria-label="Language selection">
+            <button
+              onClick={() => setLanguage('en')}
+              aria-label="Switch language to English"
+              aria-pressed={language === 'en'}
+              className={`lang-btn font-body text-sm tracking-[0.15em] uppercase transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#242424]/20 rounded-sm ${
+                language === 'en'
+                  ? 'text-[#242424] opacity-100'
+                  : 'text-[#242424]/40 hover:text-[#242424]/70'
+              }`}
+            >
+              EN
+            </button>
+            <span className="text-[#242424]/25 text-sm select-none" aria-hidden="true">|</span>
+            <button
+              onClick={() => setLanguage('hi')}
+              aria-label="Switch language to Hindi"
+              aria-pressed={language === 'hi'}
+              className={`lang-btn lang-btn--devanagari font-body text-sm tracking-[0.08em] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#242424]/20 rounded-sm ${
+                language === 'hi'
+                  ? 'text-[#242424] opacity-100'
+                  : 'text-[#242424]/40 hover:text-[#242424]/70'
+              }`}
+            >
+              हिंदी
+            </button>
+          </div>
+
+          {/* Mobile Controls: compact language button + Explore */}
+          <div className="reveal-nav md:hidden flex items-center gap-2 z-50 relative">
+            {/* Compact Language Button — shows the other language as a short label */}
+            <div ref={langBtnRef} className="relative">
+              <button
+                className="font-body text-[10px] sm:text-sm tracking-[0.12em] uppercase text-[#242424]/60 hover:text-[#242424] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#242424]/20 rounded-sm px-1.5 py-2 min-w-[32px] text-center"
+                onClick={() => setIsLangPanelOpen((prev) => !prev)}
+                aria-label="Language selection"
+                aria-expanded={isLangPanelOpen}
+              >
+                {/* Show the abbreviated label of the OTHER language */}
+                {language === 'en' ? (
+                  <span  style={{ fontFamily: '"Noto Sans Devanagari", sans-serif', fontSize: '12px' }}>हिंदी</span>
+                ) : (
+                  'EN'
+                )}
+              </button>
+
+              {/* Language selection panel */}
+              {isLangPanelOpen && (
+                <div
+                  className="absolute top-full right-0 mt-1 bg-ivory border border-[#242424]/12 shadow-sm rounded-sm py-1 min-w-[80px] z-50"
+                  role="listbox"
+                  aria-label="Select language"
+                >
+                  <button
+                    role="option"
+                    aria-selected={language === 'en'}
+                    onClick={() => { setLanguage('en'); setIsLangPanelOpen(false) }}
+                    className={`w-full text-left px-3 py-2 font-body text-sm tracking-[0.14em] uppercase transition-colors duration-150 focus-visible:outline-none ${
+                      language === 'en'
+                        ? 'text-[#242424] font-medium'
+                        : 'text-[#242424]/50 hover:text-[#242424]/80'
+                    }`}
+                  >
+                    EN
+                  </button>
+                  <button
+                    role="option"
+                    aria-selected={language === 'hi'}
+                    onClick={() => { setLanguage('hi'); setIsLangPanelOpen(false) }}
+                    className={`w-full text-left px-3 py-2 font-body text-sm tracking-[0.06em] transition-colors duration-150 focus-visible:outline-none ${
+                      language === 'hi'
+                        ? 'text-[#242424] font-medium'
+                        : 'text-[#242424]/50 hover:text-[#242424]/80'
+                    }`}
+                    style={{ fontFamily: '"Noto Sans Devanagari", sans-serif' }}
+                  >
+                    हिंदी
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Explore / Close button — translated */}
+            <button
+              className="font-body text-sm sm:text-sm md:text-sm tracking-[0.15em] uppercase text-[#242424] p-2 -mr-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#242424]/20 rounded-sm transition-all font-medium"
+              onClick={toggleMenu}
+              aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-menu"
+            >
+              {isMenuOpen ? t('navigation.close') : t('navigation.explore')}
+            </button>
+          </div>
         </nav>
       </header>
 
@@ -182,11 +293,12 @@ function Navigation() {
                   activeSection === item.target ? 'text-[#242424]' : 'text-[#242424]/40 hover:text-[#242424]/70'
                 }`}
               >
-                {item.label}
+                {t(`navigation.${item.target}`)}
               </a>
             </li>
           ))}
         </ul>
+
         <div className="absolute inset-x-6 bottom-10 flex items-center justify-between border-t border-[#242424]/10 pt-5">
           <span className="eyebrow text-[#242424]/70">Shri Radhika</span>
           <span className="eyebrow text-[#242424]/70">Developers</span>

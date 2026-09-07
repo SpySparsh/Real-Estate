@@ -4,12 +4,14 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { CustomEase } from 'gsap/CustomEase'
 import { useGSAP } from '@gsap/react'
+import { useTranslation } from '../hooks/useTranslation'
 
 gsap.registerPlugin(ScrollTrigger, CustomEase)
 CustomEase.create('premiumReveal', '0.22, 1, 0.36, 1')
 
 function Hero() {
   const containerRef = useRef(null)
+  const { language, t, tArray } = useTranslation()
 
   useGSAP(() => {
     const mm = gsap.matchMedia()
@@ -540,10 +542,15 @@ gsap.set('.hero-image', {
         {/* Main Statement */}
         <div className="hero-text-content lg:col-span-7 will-change-transform">
           <div className="mb-4 md:mb-8">
-            {hero.headline.map((line, index) => (
-              <div key={index} className="overflow-hidden pb-1 md:pb-2">
+            {tArray('hero.headlineLines').map((line, index) => (
+              <div
+                key={index}
+                className={`hero-headline-wrapper overflow-hidden pb-1 md:pb-2 ${
+                  language === 'hi' ? 'hero-headline-clip-hi' : ''
+                }`}
+              >
                 <h1
-                  className="hero-headline-line display-heading text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-9xl tracking-tight will-change-transform"
+                  className={`hero-headline-line display-heading text-4xl sm:text-5xl md:text-7xl lg:text-8xl xl:text-9xl tracking-tight will-change-transform${language === 'hi' ? ' lang-devanagari' : ''}`}
                 >
                   {line}
                 </h1>
@@ -556,8 +563,8 @@ gsap.set('.hero-image', {
             <p className="hero-label eyebrow">
               {company.name}
             </p>
-            <p className="hero-label eyebrow mt-1">
-              {hero.label}
+            <p className={`hero-label eyebrow mt-1${language === 'hi' ? ' lang-devanagari' : ''}`}>
+              {t('hero.label')}
             </p>
           </div>
         </div>
@@ -582,7 +589,9 @@ gsap.set('.hero-image', {
       <div className="hero-scroll relative mt-6 md:mt-0 md:absolute md:bottom-8 md:left-12 lg:left-20 z-10">
         <p className="eyebrow flex items-center gap-3">
           <span className="inline-block w-8 h-px bg-neutral" />
-          {hero.scrollIndicator}
+          <span className={language === 'hi' ? 'lang-devanagari' : ''}>
+            {t('hero.scrollIndicator')}
+          </span>
         </p>
       </div>
     </section>

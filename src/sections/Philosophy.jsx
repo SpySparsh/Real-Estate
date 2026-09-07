@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
+import { useTranslation } from '../hooks/useTranslation'
 
 // Asset imports
 import locationBg from '../assets/images/location/contour-map.svg'
@@ -140,6 +141,8 @@ const STAGE_DURATIONS = [5000, 5000, 5000, 5500]
 /* -------------------------------------------------------------------------- */
 
 export default function Philosophy({ isActive = false }) {
+  const { t } = useTranslation()
+
   const sectionRef = useRef(null)
   const stageContainerRef = useRef(null)
   const stageRefs = useRef([])
@@ -422,9 +425,9 @@ export default function Philosophy({ isActive = false }) {
     >
       {/* HEADER */}
       <div className="philosophy-header">
-        <span className="philosophy-eyebrow intro-eyebrow eyebrow ">OUR PHILOSOPHY</span>
+        <span className="philosophy-eyebrow intro-eyebrow eyebrow ">{t('philosophy.eyebrow')}</span>
         <p className="philosophy-intro">
-         Where Potential Begins.
+         {t('philosophy.intro')}
         </p>
       </div>
 
@@ -482,9 +485,9 @@ export default function Philosophy({ isActive = false }) {
             {/* Layer 2: Editorial Central Content */}
             <div className="philosophy-stage-content">
               <span className="philosophy-stage-number">{stage.number}</span>
-              <span className="philosophy-stage-title">{stage.title}</span>
-              <h2 className="philosophy-stage-statement">{stage.statement}</h2>
-              <p className="philosophy-stage-support">{stage.support}</p>
+              <span className="philosophy-stage-title">{t(`philosophy.${stage.id}.title`)}</span>
+              <h2 className="philosophy-stage-statement">{t(`philosophy.${stage.id}.statement`)}</h2>
+              <p className="philosophy-stage-support">{t(`philosophy.${stage.id}.support`)}</p>
             </div>
           </article>
         ))}
@@ -500,7 +503,7 @@ export default function Philosophy({ isActive = false }) {
             className={`philosophy-progress-item ${
               activeStage === index ? 'is-active' : ''
             }`}
-            aria-label={`Go to stage ${stage.number}: ${stage.title}`}
+            aria-label={`Go to stage ${stage.number}: ${t(`philosophy.${stage.id}.title`)}`}
           >
             {stage.number}
           </button>

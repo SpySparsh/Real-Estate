@@ -3,11 +3,24 @@ import { enquiry } from '../data/siteData'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
+import { useTranslation } from '../hooks/useTranslation'
 
 gsap.registerPlugin(ScrollTrigger)
 
 function Enquiry() {
   const containerRef = useRef(null)
+  const { t, tArray } = useTranslation()
+
+  // Maps each English interest value (used as <option value=>, sent to backend)
+  // to its translated display label. Backend payload is always the English string.
+  const interestLabelMap = {
+    'General Enquiry':        t('enquiry.interestGeneral'),
+    'Residential Project':    t('enquiry.interestResidential'),
+    'Commercial Project':     t('enquiry.interestCommercial'),
+    'Investment Opportunity': t('enquiry.interestInvestment'),
+    'Partnership':            t('enquiry.interestPartnership'),
+    'Other':                  t('enquiry.interestOther'),
+  }
 
   useGSAP(() => {
     const mm = gsap.matchMedia()
@@ -100,12 +113,12 @@ function Enquiry() {
 
   const validateForm = () => {
     const errors = {}
-    if (!formData.name.trim()) errors.name = 'Name is required'
-    if (!formData.phone.trim()) errors.phone = 'Phone is required'
+    if (!formData.name.trim()) errors.name = t('enquiry.validationNameRequired')
+    if (!formData.phone.trim()) errors.phone = t('enquiry.validationPhoneRequired')
     if (!formData.email.trim()) {
-      errors.email = 'Email is required'
+      errors.email = t('enquiry.validationEmailRequired')
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      errors.email = 'Please enter a valid email address'
+      errors.email = t('enquiry.validationEmailInvalid')
     }
     return errors
   }
@@ -136,7 +149,7 @@ function Enquiry() {
 
     if (isPlaceholderAccessKey) {
       setStatus('error')
-      setGlobalError('The enquiry form is not configured yet. Please contact the website administrator.')
+      setGlobalError(t('enquiry.errorNotConfigured'))
       return
     }
 
@@ -177,11 +190,11 @@ function Enquiry() {
         setValidationErrors({})
       } else {
         setStatus('error')
-        setGlobalError(json?.message || 'Something went wrong. Please try again later.')
+        setGlobalError(json?.message || t('enquiry.errorGeneric'))
       }
     } catch (error) {
       setStatus('error')
-      setGlobalError('A network error occurred. Please check your connection and try again.')
+      setGlobalError(t('enquiry.errorNetwork'))
     }
   }
 
@@ -190,13 +203,13 @@ function Enquiry() {
       <div className="container-base">
         {/* Section Label */}
         <p className="enquiry-eyebrow eyebrow mb-6 md:mb-12">
-          Enquiry
+          {t('enquiry.eyebrow')}
         </p>
 
         {/* Headline */}
         <div className="mb-6 md:mb-12">
-          {enquiry.headline.map((line, index) => (
-            <div key={index} className="overflow-hidden pb-1">
+          {tArray('enquiry.headlineLines').map((line, index) => (
+            <div key={index} className="enquiry-headline-wrapper overflow-hidden pb-1">
               <h2
                 className="enquiry-headline display-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl"
               >
@@ -214,16 +227,16 @@ function Enquiry() {
           {status === 'success' ? (
             <div className="py-12 border-t border-black/10">
               <h3 className="font-display text-2xl md:text-3xl font-medium text-black mb-4">
-                Thank you.
+                {t('enquiry.successHeading')}
               </h3>
               <p className="body-copy max-w-md">
-                We have received your enquiry and our team will be in touch with you shortly.
+                {t('enquiry.successBody')}
               </p>
               <button
                 onClick={() => setStatus('idle')}
                 className="mt-8 cta-link"
               >
-                Send another message →
+                {t('enquiry.successReset')}
               </button>
             </div>
           ) : (
@@ -253,7 +266,7 @@ function Enquiry() {
               <div className={`enquiry-field-wrapper fine-divider pb-3 transition-colors duration-300 ${validationErrors.name ? 'border-red-500' : 'focus-within:border-black'}`}>
                 <div className="flex justify-between items-center mb-2 mt-3">
                   <label htmlFor="enquiry-name" className="eyebrow block text-neutral/80">
-                    Name *
+                    {t('enquiry.labelName')}
                   </label>
                   {validationErrors.name && (
                     <span className="font-body text-xs text-red-500">{validationErrors.name}</span>
@@ -266,7 +279,7 @@ function Enquiry() {
                   value={formData.name}
                   onChange={handleChange}
                   className="w-full bg-transparent font-body text-base text-black outline-none placeholder:text-neutral/50"
-                  placeholder="Your name"
+                  placeholder={t('enquiry.placeholderName')}
                   disabled={status === 'submitting'}
                   required
                 />
@@ -276,7 +289,7 @@ function Enquiry() {
               <div className={`enquiry-field-wrapper fine-divider pb-3 transition-colors duration-300 ${validationErrors.phone ? 'border-red-500' : 'focus-within:border-black'}`}>
                 <div className="flex justify-between items-center mb-2 mt-3">
                   <label htmlFor="enquiry-phone" className="eyebrow block text-neutral/80">
-                    Phone *
+                    {t('enquiry.labelPhone')}
                   </label>
                   {validationErrors.phone && (
                     <span className="font-body text-xs text-red-500">{validationErrors.phone}</span>
@@ -289,7 +302,7 @@ function Enquiry() {
                   value={formData.phone}
                   onChange={handleChange}
                   className="w-full bg-transparent font-body text-base text-black outline-none placeholder:text-neutral/50"
-                  placeholder="Your phone number"
+                  placeholder={t('enquiry.placeholderPhone')}
                   disabled={status === 'submitting'}
                   required
                 />
@@ -299,7 +312,7 @@ function Enquiry() {
               <div className={`enquiry-field-wrapper fine-divider pb-3 transition-colors duration-300 ${validationErrors.email ? 'border-red-500' : 'focus-within:border-black'}`}>
                 <div className="flex justify-between items-center mb-2 mt-3">
                   <label htmlFor="enquiry-email" className="eyebrow block text-neutral/80">
-                    Email *
+                    {t('enquiry.labelEmail')}
                   </label>
                   {validationErrors.email && (
                     <span className="font-body text-xs text-red-500">{validationErrors.email}</span>
@@ -312,7 +325,7 @@ function Enquiry() {
                   value={formData.email}
                   onChange={handleChange}
                   className="w-full bg-transparent font-body text-base text-black outline-none placeholder:text-neutral/50"
-                  placeholder="Your email address"
+                  placeholder={t('enquiry.placeholderEmail')}
                   disabled={status === 'submitting'}
                   required
                 />
@@ -324,7 +337,7 @@ function Enquiry() {
                   htmlFor="enquiry-interest"
                   className="eyebrow block mb-2 mt-3 text-neutral/80"
                 >
-                  Interest
+                  {t('enquiry.labelInterest')}
                 </label>
                 <select
                   id="enquiry-interest"
@@ -334,10 +347,13 @@ function Enquiry() {
                   className="w-full bg-transparent font-body text-base text-black outline-none cursor-pointer"
                   disabled={status === 'submitting'}
                 >
-                  <option value="">Select an interest</option>
+                  {/* value= stays as empty string — structural, not translated */}
+                  <option value="">{t('enquiry.placeholderInterestDefault')}</option>
                   {enquiry.interests.map((interest) => (
+                    // value= stays as the English string — sent to backend unchanged
+                    // display label is resolved from interestLabelMap
                     <option key={interest} value={interest}>
-                      {interest}
+                      {interestLabelMap[interest] || interest}
                     </option>
                   ))}
                 </select>
@@ -349,7 +365,7 @@ function Enquiry() {
                   htmlFor="enquiry-message"
                   className="eyebrow block mb-2 mt-3 text-neutral/80"
                 >
-                  Message
+                  {t('enquiry.labelMessage')}
                 </label>
                 <textarea
                   id="enquiry-message"
@@ -358,7 +374,7 @@ function Enquiry() {
                   onChange={handleChange}
                   rows={4}
                   className="w-full bg-transparent font-body text-base text-black outline-none placeholder:text-neutral/50 resize-none"
-                  placeholder="Tell us about your enquiry"
+                  placeholder={t('enquiry.placeholderMessage')}
                   disabled={status === 'submitting'}
                 />
               </div>
@@ -370,7 +386,7 @@ function Enquiry() {
                   className="cta-link disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={status === 'submitting'}
                 >
-                  {status === 'submitting' ? 'Sending...' : 'Send Enquiry →'}
+                  {status === 'submitting' ? t('enquiry.submitSending') : t('enquiry.submitIdle')}
                 </button>
               </div>
             </form>

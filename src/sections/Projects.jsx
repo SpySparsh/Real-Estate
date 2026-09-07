@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { CustomEase } from 'gsap/CustomEase'
 import { useGSAP } from '@gsap/react'
 import { getPostPhilosophyStart } from '../utils/animations'
+import { useTranslation } from '../hooks/useTranslation'
 
 gsap.registerPlugin(ScrollTrigger, CustomEase)
 CustomEase.create('premiumReveal', '0.22, 1, 0.36, 1')
@@ -159,6 +160,14 @@ function Projects({ isActive = false, activeIndex = 0 }) {
   const galleryTimelineRef = useRef({})
   const pendingLayerEnterRef = useRef({})
   const mediaSwapTweenRef = useRef({})
+
+  const { t } = useTranslation()
+
+  // Resolves translatable text for a specific project using project.id as the key.
+  // project.id values are "01", "02", "03", "04" — mapped to p01, p02, p03, p04.
+  // Only text fields (name, category, location, status, description) are resolved.
+  // All structural data (images, mediaViews, etc.) always comes from siteData directly.
+  const tp = (projectId, field) => t(`projects.p${projectId}.${field}`)
 
   useEffect(() => {
     applyProjectFocusState(containerRef.current, activeIndex, isActive)
@@ -772,7 +781,7 @@ const view = isDesktop
     if (!item) {
       return (
         <div className={`project-image w-full h-full flex items-center justify-center bg-neutral/5 ${className}`}>
-          <p className="eyebrow">Project Media</p>
+          <p className="eyebrow">{t('projects.projectMediaLabel')}</p>
         </div>
       )
     }
@@ -843,7 +852,7 @@ const view = isDesktop
               onClick={() => handleGalleryChange(project.id, content.length, activeIndex - 1)}
               aria-label="Previous gallery image"
             >
-              Prev
+              {t('projects.galleryPrev')}
             </button>
             <div className="project-gallery-dots" aria-label="Gallery image selection">
               {content.map((item, index) => (
@@ -862,7 +871,7 @@ const view = isDesktop
               onClick={() => handleGalleryChange(project.id, content.length, activeIndex + 1)}
               aria-label="Next gallery image"
             >
-              Next
+              {t('projects.galleryNext')}
             </button>
           </div>
         </div>
@@ -880,9 +889,9 @@ const view = isDesktop
             />
           )}
           <div className="project-placeholder-overlay">
-            <p className="eyebrow text-ivory/70">Project Film</p>
+            <p className="eyebrow text-ivory/70">{t('projects.filmLabel')}</p>
             <span className="project-play-mark" aria-hidden="true" />
-            <p className="font-display text-2xl text-ivory">Coming Soon</p>
+            <p className="font-display text-2xl text-ivory">{t('projects.filmComingSoon')}</p>
           </div>
         </div>
       )
@@ -900,11 +909,11 @@ const view = isDesktop
           )}
           <div className="project-map-grid" aria-hidden="true" />
           <div className="project-placeholder-overlay">
-            <p className="eyebrow text-ivory/70">Project Location</p>
-            <p className="font-display text-2xl text-ivory">Location Map</p>
-            <p className="eyebrow text-ivory/70">{project.location}</p>
+            <p className="eyebrow text-ivory/70">{t('projects.locationLabel')}</p>
+            <p className="font-display text-2xl text-ivory">{t('projects.locationMap')}</p>
+            <p className="eyebrow text-ivory/70">{tp(project.id, 'location')}</p>
             <p className="font-body text-xs leading-relaxed text-ivory/65 max-w-[15rem]">
-              {content?.description || 'Map integration coming soon.'}
+              {content?.description || t('projects.locationComingSoon')}
             </p>
           </div>
         </div>
@@ -1015,7 +1024,7 @@ const view = isDesktop
 
         <div className="project-placeholder-overlay">
           <p className="eyebrow text-ivory/70">
-            Project Film
+            {t('projects.filmLabel')}
           </p>
 
           <span
@@ -1024,7 +1033,7 @@ const view = isDesktop
           />
 
           <p className="font-display text-2xl text-ivory">
-            Coming Soon
+            {t('projects.filmComingSoon')}
           </p>
         </div>
       </div>
@@ -1050,20 +1059,20 @@ const view = isDesktop
 
         <div className="project-placeholder-overlay">
           <p className="eyebrow text-ivory/70">
-            Project Location
+            {t('projects.locationLabel')}
           </p>
 
           <p className="font-display text-2xl text-ivory">
-            Location Map
+            {t('projects.locationMap')}
           </p>
 
           <p className="eyebrow text-ivory/70">
-            {project.location}
+            {tp(project.id, 'location')}
           </p>
 
           <p className="font-body text-xs leading-relaxed text-ivory/65 max-w-[15rem]">
             {content?.description ||
-              'Map integration coming soon.'}
+              t('projects.locationComingSoon')}
           </p>
         </div>
       </div>
@@ -1077,7 +1086,7 @@ const view = isDesktop
     <>
       {/* Explore Cursor (Desktop Only) */}
       <div ref={cursorRef} className="explore-cursor hidden md:block">
-        Explore →
+        {t('projects.exploreLabel')}
       </div>
 
       <div
@@ -1099,10 +1108,10 @@ const view = isDesktop
           {/* Section Introduction */}
           <div className="projects-intro mb-10 md:mb-32">
             <p className="projects-intro-text eyebrow mb-4 md:mb-6">
-              Portfolio
+              {t('projects.eyebrow')}
             </p>
             <h2 className="projects-intro-text display-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
-              Selected<br />Projects.
+              {t('projects.heading')}<br />{t('projects.headingAccent')}
             </h2>
           </div>
 
@@ -1122,10 +1131,10 @@ const galleryIndex =
 
 
 const mediaOptions = [
-  ['overview', 'Overview'],
-  ['gallery', 'Gallery'],
-  ['film', 'Video'],
-  ['location', 'Location'],
+  ['overview', t('projects.mediaOverview')],
+  ['gallery', t('projects.mediaGallery')],
+  ['film', t('projects.mediaFilm')],
+  ['location', t('projects.mediaLocation')],
 ]
 
 const mobileOptions = mediaOptions
@@ -1157,26 +1166,26 @@ const mobileOptions = mediaOptions
 
                       {/* Project Name */}
                       <h3 className="project-meta font-display text-2xl sm:text-3xl md:text-4xl font-medium text-black mb-3 md:mb-4 tracking-tight">
-                        {project.name}
+                        {tp(project.id, 'name')}
                       </h3>
 
                       {/* Details */}
                       <div className="space-y-1 mb-4 md:mb-6">
                         <p className="project-meta font-body text-xs tracking-[0.15em] uppercase text-neutral">
-                          {project.category}
+                          {tp(project.id, 'category')}
                         </p>
                         <p className="project-meta hidden md:block font-body text-xs tracking-[0.15em] uppercase text-neutral">
-                          {project.location}
+                          {tp(project.id, 'location')}
                         </p>
                         <p className="project-meta font-body text-xs tracking-[0.15em] uppercase text-accent font-medium">
-                          {project.status}
+                          {tp(project.id, 'status')}
                         </p>
                       </div>
 
                       {/* Description */}
                       <div className="project-desc hidden md:block mb-4 md:mb-0">
                         <p className="body-copy max-w-md">
-                          {project.description}
+                          {tp(project.id, 'description')}
                         </p>
                       </div>
 
@@ -1208,7 +1217,7 @@ const mobileOptions = mediaOptions
                     {/* Project Media Column */}
                     <div className="md:col-span-7 flex flex-col">
                       <div className="project-mobile-switcher md:hidden">
-                        <p className="project-switcher-label">Project Media</p>
+                        <p className="project-switcher-label">{t('projects.projectMediaLabel')}</p>
                         <div
                           className="project-mobile-media-nav"
                           style={{ '--active-tab-index': mobileOptions.findIndex(([view]) => view === mobileView) }}
@@ -1253,11 +1262,11 @@ const mobileOptions = mediaOptions
                       {/* Mobile Description */}
                       <div className="project-mobile-desc md:hidden pt-5">
                         <p className="body-copy">
-                          {project.description}
+                          {tp(project.id, 'description')}
                         </p>
                         <div className="project-mobile-facts">
-                          <span>{project.location}</span>
-                          <span>{project.status}</span>
+                          <span>{tp(project.id, 'location')}</span>
+                          <span>{tp(project.id, 'status')}</span>
                         </div>
                       </div>
                     </div>

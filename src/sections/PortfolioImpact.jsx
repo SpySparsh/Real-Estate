@@ -4,11 +4,22 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { getPostPhilosophyStart } from '../utils/animations'
+import { useTranslation } from '../hooks/useTranslation'
 
 gsap.registerPlugin(ScrollTrigger)
 
 function PortfolioImpact() {
   const containerRef = useRef(null)
+  const { t } = useTranslation()
+
+  // Maps statistics[] index → translation key for the label.
+  // Order must match siteData.statistics: YearsOfExperience, Developments, AcresDeveloped, Locations.
+  const statLabelKeys = [
+    'portfolioImpact.yearsOfExperience',
+    'portfolioImpact.developments',
+    'portfolioImpact.acresDeveloped',
+    'portfolioImpact.locations',
+  ]
 
   useGSAP(() => {
     const mm = gsap.matchMedia()
@@ -225,7 +236,7 @@ function PortfolioImpact() {
       <div className="container-base relative z-20">
         {/* Section Label */}
         <p className="impact-eyebrow eyebrow mb-6 md:mb-12 text-neutral/70">
-          Portfolio Impact
+          {t('portfolioImpact.eyebrow')}
         </p>
 
         {/* Top divider */}
@@ -241,7 +252,7 @@ function PortfolioImpact() {
                 {/* Fine divider per stat */}
                 <div className="stat-divider h-px bg-ivory/20 mb-6 md:mb-8" />
 
-                {/* Value */}
+                {/* Value — numeric values are never translated */}
                 <div className="overflow-hidden mb-3 md:mb-6">
                   <p
                     className="stat-value font-display text-6xl sm:text-7xl md:text-7xl lg:text-8xl xl:text-9xl font-medium text-ivory leading-none tracking-tight"
@@ -254,7 +265,7 @@ function PortfolioImpact() {
 
                 {/* Label */}
                 <p className="stat-label font-body text-xs sm:text-sm tracking-[0.2em] uppercase text-neutral/70 max-w-[15rem]">
-                  {stat.label}
+                  {t(statLabelKeys[index])}
                 </p>
               </div>
             )

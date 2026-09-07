@@ -127,6 +127,77 @@
   transition: none;
 }
 
+/* ── Language Switcher ── */
+.lang-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.lang-btn--devanagari {
+  font-family: "Noto Sans Devanagari", var(--font-body), sans-serif;
+}
+
+/* Applied to Hero text elements when Hindi (hi) language is active */
+.lang-devanagari {
+  font-family: "Noto Sans Devanagari", var(--font-body), sans-serif;
+}
+
+/* ── Hindi Display Typography — Clipping Fix ── */
+/* Activates when LanguageContext sets html[lang="hi"].  */
+/* Restores full original font sizes (no clamp reductions) */
+/* and expands clipping wrappers on mobile and desktop.   */
+
+/* Mobile clearance for Vision & Enquiry */
+html[lang="hi"] .vision-headline-wrapper {
+  overflow: hidden;
+  padding-top: 10px;
+  min-height: 52px;
+}
+html[lang="hi"] .vision-headline {
+  line-height: 1.25;
+}
+
+html[lang="hi"] .enquiry-headline-wrapper {
+  overflow: hidden;
+  padding-top: 10px;
+  min-height: 52px;
+}
+html[lang="hi"] .enquiry-headline {
+  line-height: 1.25;
+}
+
+@media (min-width: 768px) {
+  /* Vision headline clipping wrapper */
+  html[lang="hi"] .vision-headline-wrapper {
+    overflow: hidden;
+    padding-top: 24px;
+    min-height: 125px;
+  }
+  html[lang="hi"] .vision-headline {
+    line-height: 1.25;
+  }
+
+  /* Enquiry headline clipping wrapper */
+  html[lang="hi"] .enquiry-headline-wrapper {
+    overflow: hidden;
+    padding-top: 20px;
+    min-height: 110px;
+  }
+  html[lang="hi"] .enquiry-headline {
+    line-height: 1.25;
+  }
+
+  /* Introduction large headline */
+  html[lang="hi"] .intro-main-headline {
+    line-height: 1.25;
+    padding-top: 14px;
+    min-height: 90px;
+  }
+}
+
 /* ── Project Curtain Reveal ── */
 .project-curtain {
   position: absolute;
@@ -1690,4 +1761,24 @@
 
 .enquiry-field-wrapper:focus-within::after {
   width: 100%;
+}
+
+/* Hindi Hero headline — mobile clearance (unchanged) */
+.hero-headline-clip-hi {
+  padding-top: 0.22em;
+  padding-bottom: 0.12em;
+}
+
+/* Hindi Hero headline — desktop clipping fix (min-width: 768px) */
+@media (min-width: 768px) {
+  html[lang="hi"] .hero-headline-clip-hi,
+  html[lang="hi"] .hero-headline-wrapper {
+    overflow: hidden;
+    padding-top: 26px !important;
+    padding-bottom: 20px !important;
+    min-height: 125px;
+  }
+  html[lang="hi"] .hero-headline-line {
+    line-height: 1.18;
+  }
 }

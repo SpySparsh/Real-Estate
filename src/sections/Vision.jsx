@@ -5,12 +5,14 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { CustomEase } from 'gsap/CustomEase'
 import { useGSAP } from '@gsap/react'
 import { getPostPhilosophyStart } from '../utils/animations'
+import { useTranslation } from '../hooks/useTranslation'
 
 gsap.registerPlugin(ScrollTrigger, CustomEase)
 CustomEase.create('premiumReveal', '0.22, 1, 0.36, 1')
 
 function Vision() {
   const containerRef = useRef(null)
+  const { t, tArray } = useTranslation()
 
   useGSAP(() => {
     const mm = gsap.matchMedia()
@@ -266,12 +268,12 @@ function Vision() {
     <section id="about" ref={containerRef} className="section-padding-x py-12 sm:py-16 md:py-24 lg:py-32 xl:py-40 bg-ivory overflow-hidden">
       <div className="container-base">
         <p className="vision-eyebrow eyebrow mb-6 md:mb-16">
-          Vision & Purpose
+          {t('vision.eyebrow')}
         </p>
 
         <div className="max-w-5xl mb-8 md:mb-20">
-          {vision.statement.map((line, index) => (
-            <div key={index} className="overflow-hidden pb-1 md:pb-2">
+          {tArray('vision.headlineLines').map((line, index) => (
+            <div key={index} className="vision-headline-wrapper overflow-hidden pb-1 md:pb-2">
               <h2
                 className="vision-headline display-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl"
               >
@@ -294,7 +296,7 @@ function Vision() {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <p className="eyebrow">Vision Image</p>
+                    <p className="eyebrow">{t('vision.imageFallback')}</p>
                   </div>
                 )}
               </div>
@@ -303,7 +305,7 @@ function Vision() {
 
           <div className="md:col-span-4 flex items-end">
             <p className="vision-desc body-copy">
-              {vision.description}
+              {t('vision.description')}
             </p>
           </div>
         </div>

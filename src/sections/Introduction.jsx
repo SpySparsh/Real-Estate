@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import introImage1 from '../assets/intro-image-1.png'
 import introImage2 from '../assets/intro-image-2.png'
+import { useTranslation } from '../hooks/useTranslation'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -165,6 +166,7 @@ export default function Introduction() {
   const isRunningRef = useRef(false)
 
   const [activeState, setActiveState] = useState(0)
+  const { t } = useTranslation()
 
   /* Entrance animation — unchanged from original intent */
   useGSAP(() => {
@@ -292,7 +294,33 @@ export default function Introduction() {
     }
   }, [])
 
-  const current = STATES[activeState]
+  // ── Derive translated stage data at render time ──────────────────────────
+  // STATES holds images and numeric values (untouched).
+  // We overlay translated labels here so language changes are instant.
+  const translatedStages = [
+    {
+      ...STATES[0],
+      label: t('introduction.stagePlanning'),
+      note:  t('introduction.planningNote'),
+      scales: [
+        { ...STATES[0].scales[0], label: t('introduction.planningScaleValue') },
+        { ...STATES[0].scales[1], label: t('introduction.planningScalePotential') },
+        { ...STATES[0].scales[2], label: t('introduction.planningScaleOpportunity') },
+      ],
+    },
+    {
+      ...STATES[1],
+      label: t('introduction.stageDeveloped'),
+      note:  t('introduction.developedNote'),
+      scales: [
+        { ...STATES[1].scales[0], label: t('introduction.developedScaleValue') },
+        { ...STATES[1].scales[1], label: t('introduction.developedScaleDevelopment') },
+        { ...STATES[1].scales[2], label: t('introduction.developedScaleMarket') },
+      ],
+    },
+  ]
+
+  const current = translatedStages[activeState]
 
   return (
     <section
@@ -304,7 +332,7 @@ export default function Introduction() {
       <div className="container-base intro-inner">
 
         {/* ── Eyebrow ─────────────────────────────────────────────────── */}
-        <p className="intro-eyebrow eyebrow">Introduction</p>
+        <p className="intro-eyebrow eyebrow">{t('introduction.eyebrow')}</p>
 
         {/* ── Two-column layout ──────────────────────────────────────── */}
         <div className="intro-grid">
@@ -313,12 +341,12 @@ export default function Introduction() {
           <div className="intro-scales-col">
 
             <h2 className="intro-main-headline display-heading text-4xl sm:text-5xl md:text-5xl lg:text-6xl mb-12 lg:mb-16">
-              See Beyond the Site.
+              {t('introduction.headline')}
             </h2>
 
             {/* State label / stage indicator */}
             <div className="intro-stage-indicators">
-              {STATES.map((s, i) => (
+              {translatedStages.map((s, i) => (
                 <button
                   key={i}
                   type="button"

@@ -4,6 +4,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { getPostPhilosophyStart } from '../utils/animations'
+import { useTranslation } from '../hooks/useTranslation'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -21,6 +22,12 @@ const [isTransitioning, setIsTransitioning] = useState(false)
   const isDraggingRef = useRef(false)
   const touchStartX = useRef(0)
   const touchStartY = useRef(0)
+
+  const { t } = useTranslation()
+
+  // Helper: resolve a per-partner translation key.
+  // Partner names are proper nouns — they always come from siteData, never translated.
+  const tp = (partnerId, key) => t(`partners.p${partnerId}.${key}`)
 
   const currentPartner = partners[activeIndex]
 
@@ -242,6 +249,15 @@ const [isTransitioning, setIsTransitioning] = useState(false)
     }
   }, [])
 
+  // Resolve the qualities array for the active partner via t() by numeric index.
+  // t() already supports array indexing: qualities.0, qualities.1, qualities.2
+  const tpQualities = (partnerId) =>
+    [
+      t(`partners.p${partnerId}.qualities.0`),
+      t(`partners.p${partnerId}.qualities.1`),
+      t(`partners.p${partnerId}.qualities.2`),
+    ].filter((q) => q && !q.startsWith('partners.'))
+
   return (
     <section
       id="partners"
@@ -253,14 +269,14 @@ const [isTransitioning, setIsTransitioning] = useState(false)
         <div className="container-base">
           {/* Introduction */}
           <div className="partners-section-intro mb-20">
-            <p className="eyebrow mb-4">Strategic Partners</p>
+            <p className="eyebrow mb-4">{t('partners.eyebrow')}</p>
             <h2 className="display-heading text-5xl md:text-6xl lg:text-7xl max-w-2xl">
-              Trusted by long-term thinkers.
+              {t('partners.headline')}
             </h2>
           </div>
 
           {/* Main presentation stage */}
-          <div 
+          <div
             className="partners-stage grid grid-cols-2 gap-16 items-center select-none"
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
@@ -276,7 +292,7 @@ const [isTransitioning, setIsTransitioning] = useState(false)
                 </span>
               </div>
 
-              {/* Partner name */}
+              {/* Partner name — proper noun, never translated */}
               <div>
                 <h3 className="font-display text-5xl md:text-6xl text-black leading-none tracking-tight mb-3">
                   {currentPartner.name}
@@ -284,23 +300,23 @@ const [isTransitioning, setIsTransitioning] = useState(false)
 
                 {/* Role */}
                 <p className="font-body text-xs md:text-sm tracking-[0.15em] uppercase text-accent font-medium">
-                  {currentPartner.role}
+                  {tp(currentPartner.id, 'role')}
                 </p>
               </div>
 
               {/* Focus area */}
               <p className="font-body text-xs tracking-[0.18em] uppercase text-neutral/70">
-                {currentPartner.focus}
+                {tp(currentPartner.id, 'focus')}
               </p>
 
               {/* Description */}
               <p className="body-copy max-w-md text-base md:text-lg leading-relaxed pt-4">
-                {currentPartner.description}
+                {tp(currentPartner.id, 'description')}
               </p>
 
               {/* Qualities */}
               <ul className="flex flex-wrap gap-2 pt-4">
-                {currentPartner.qualities.map((quality) => (
+                {tpQualities(currentPartner.id).map((quality) => (
                   <li
                     key={quality}
                     className="rounded-full border border-neutral/30 bg-ivory px-3 py-1.5 text-xs font-medium tracking-[0.12em] uppercase text-black/70"
@@ -318,7 +334,7 @@ const [isTransitioning, setIsTransitioning] = useState(false)
                   className="cta-link disabled:opacity-40 disabled:cursor-not-allowed"
                   aria-label="Previous partner"
                 >
-                  ← Previous
+                  {t('partners.previous')}
                 </button>
                 <button
                   onClick={handleNext}
@@ -326,7 +342,7 @@ const [isTransitioning, setIsTransitioning] = useState(false)
                   className="cta-link disabled:opacity-40 disabled:cursor-not-allowed"
                   aria-label="Next partner"
                 >
-                  Next →
+                  {t('partners.next')}
                 </button>
               </div>
             </div>
@@ -392,9 +408,9 @@ const [isTransitioning, setIsTransitioning] = useState(false)
         <div className="container-base">
           {/* Introduction */}
           <div className="partners-section-intro mb-8">
-            <p className="eyebrow mb-3">Strategic Partners</p>
+            <p className="eyebrow mb-3">{t('partners.eyebrow')}</p>
             <h2 className="display-heading text-3xl sm:text-4xl">
-              Trusted by long-term thinkers.
+              {t('partners.headline')}
             </h2>
           </div>
 
@@ -406,7 +422,7 @@ const [isTransitioning, setIsTransitioning] = useState(false)
           </div>
 
           {/* Swipeable container for mobile */}
-          <div 
+          <div
             className="mobile-swipe-area select-none"
             onPointerDown={handlePointerDown}
             onPointerUp={handlePointerUp}
@@ -440,25 +456,26 @@ const [isTransitioning, setIsTransitioning] = useState(false)
             {/* Partner content */}
             <div ref={contentRef} className="space-y-4 mb-8">
               <div>
+                {/* Partner name — proper noun, never translated */}
                 <h3 className="font-display text-2xl sm:text-3xl text-black leading-tight mb-2">
                   {currentPartner.name}
                 </h3>
                 <p className="font-body text-xs tracking-[0.15em] uppercase text-accent font-medium">
-                  {currentPartner.role}
+                  {tp(currentPartner.id, 'role')}
                 </p>
               </div>
 
               <p className="font-body text-xs tracking-[0.18em] uppercase text-neutral/70">
-                {currentPartner.focus}
+                {tp(currentPartner.id, 'focus')}
               </p>
 
               <p className="body-copy text-sm leading-relaxed">
-                {currentPartner.description}
+                {tp(currentPartner.id, 'description')}
               </p>
 
               {/* Qualities */}
               <ul className="flex flex-wrap gap-2 pt-2">
-                {currentPartner.qualities.map((quality) => (
+                {tpQualities(currentPartner.id).map((quality) => (
                   <li
                     key={quality}
                     className="rounded-full border border-neutral/30 bg-ivory px-2.5 py-1 text-[10px] font-medium tracking-[0.1em] uppercase text-black/70"
@@ -478,7 +495,7 @@ const [isTransitioning, setIsTransitioning] = useState(false)
               className="cta-link disabled:opacity-40 disabled:cursor-not-allowed"
               aria-label="Previous partner"
             >
-              ← Previous
+              {t('partners.previous')}
             </button>
             <button
               onClick={handleNext}
@@ -486,7 +503,7 @@ const [isTransitioning, setIsTransitioning] = useState(false)
               className="cta-link disabled:opacity-40 disabled:cursor-not-allowed"
               aria-label="Next partner"
             >
-              Next →
+              {t('partners.next')}
             </button>
           </div>
 
