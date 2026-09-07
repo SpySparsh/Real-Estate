@@ -105,7 +105,7 @@ function ClosingCTA() {
         {/* Large Statement */}
         <div className="mb-12 md:mb-16">
           {tArray('closingCTA.statementLines').map((line, index) => (
-            <div key={index} className="overflow-hidden pb-1 md:pb-2">
+            <div key={index} className="cta-headline-wrapper overflow-hidden pb-1 md:pb-2">
               <h2
                 className="cta-headline display-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl"
               >
