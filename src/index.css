@@ -1493,8 +1493,9 @@ html[lang="hi"] .enquiry-headline {
 @media (max-width: 767px) {
   .philosophy-section {
     position: relative;
-    min-height: clamp(460px, 72dvh, 620px);
-    height: clamp(460px, 72dvh, 620px);
+    min-height: clamp(560px, 84dvh, 700px);
+    height: clamp(560px, 84dvh, 700px);
+    border-top: 1px solid rgba(36, 36, 36, 0.1);
     overflow: hidden;
     padding: 0;
     padding-bottom: 0;
@@ -1504,23 +1505,34 @@ html[lang="hi"] .enquiry-headline {
 
   .philosophy-header {
     position: absolute;
-    top: clamp(1.25rem, 3.5vh, 2rem);
-    left: clamp(1.25rem, 5vw, 2rem);
-    right: clamp(1.25rem, 5vw, 2rem);
+    top: clamp(2.25rem, 5.5vh, 3.25rem);
+    left: clamp(1.25rem, 6vw, 2rem);
+    right: clamp(1.25rem, 6vw, 2rem);
     z-index: 5;
     display: flex;
+    flex-direction: column;
     align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
+    justify-content: flex-start;
+    gap: 0.45rem;
+    text-align: left;
     pointer-events: none;
+  }
+
+  .philosophy-eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(36, 36, 36, 0.6);
   }
 
   .philosophy-intro {
     margin-top: 0;
-    max-width: 16rem;
-    font-size: 1.4rem;
-    line-height: 1.25;
-    text-align: right;
+    max-width: 17rem;
+    font-size: clamp(1.3rem, 4.2vw, 1.55rem);
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: left;
+    color: #444444;
   }
 
  /* ---------------------------------------------------------
@@ -1559,7 +1571,7 @@ html[lang="hi"] .enquiry-headline {
     width: 100%;
     max-width: 22rem;
     padding: 0 1.25rem;
-    margin-top: 1.5rem;
+    margin-top: 4.25rem;
     text-align: center;
   }
 
@@ -1652,22 +1664,26 @@ html[lang="hi"] .enquiry-headline {
     height: clamp(52px, 13vw, 78px);
   }
 
-  /* Mobile Icon Placement — Positioned closer to main content */
-  .philosophy-icon--location-1 { top: 14%; left: 1.5rem; }
-  .philosophy-icon--location-2 { bottom: 16%; right: 1.5rem; }
-  .philosophy-icon--location-3 { bottom: 13%; left: 1.75rem; }
+  /* Mobile Icon Placement — Positioned with clearance from header and balanced framing */
+  /* Location: pin upper-right, map lower-right, compass lower-left */
+  .philosophy-icon--location-1 { top: 22%; right: 1.5rem; left: auto; }
+  .philosophy-icon--location-2 { bottom: 14%; right: 1.5rem; }
+  .philosophy-icon--location-3 { bottom: 12%; left: 1.5rem; }
 
-  .philosophy-icon--vision-1 { top: 13%; left: 1.4rem; }
-  .philosophy-icon--vision-2 { top: 15%; right: 1.5rem; }
-  .philosophy-icon--vision-3 { bottom: 14%; right: 1.4rem; }
+  /* Vision: telescope upper-right, lens lower-left, sunset lower-right */
+  .philosophy-icon--vision-1 { top: 22%; right: 1.5rem; left: auto; }
+  .philosophy-icon--vision-2 { bottom: 15%; left: 1.5rem; top: auto; right: auto; }
+  .philosophy-icon--vision-3 { bottom: 12%; right: 1.5rem; }
 
-  .philosophy-icon--development-1 { top: 13%; right: 1.4rem; }
+  /* Development: crane upper-right, plans lower-left, blueprint lower-right */
+  .philosophy-icon--development-1 { top: 22%; right: 1.5rem; }
   .philosophy-icon--development-2 { bottom: 14%; left: 1.5rem; }
-  .philosophy-icon--development-3 { top: 16%; left: 1.4rem; }
+  .philosophy-icon--development-3 { bottom: 12%; right: 1.5rem; top: auto; left: auto; }
 
+  /* Value: growth upper-right, arch lower-left, globe lower-right */
   .philosophy-icon--value-1 { bottom: 14%; left: 1.5rem; }
-  .philosophy-icon--value-2 { top: 13%; right: 1.4rem; }
-  .philosophy-icon--value-3 { bottom: 16%; right: 1.6rem; }
+  .philosophy-icon--value-2 { top: 22%; right: 1.5rem; }
+  .philosophy-icon--value-3 { bottom: 12%; right: 1.5rem; }
 
   .philosophy-progress {
     display: none;
@@ -1801,5 +1817,25 @@ html[lang="hi"] .cta-headline {
     padding-top: 24px !important;
     padding-bottom: 16px !important;
     min-height: 125px;
+  }
+}
+
+/* Narrow mobile navbar — responsive company name & direct language switcher */
+.navbar-narrow-lang {
+  display: none;
+}
+
+@media (max-width: 425px) {
+  .navbar-company-name,
+  .navbar-brand-divider,
+  .navbar-compact-lang {
+    display: none !important;
+  }
+
+  .navbar-narrow-lang {
+    display: flex !important;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
   }
 }

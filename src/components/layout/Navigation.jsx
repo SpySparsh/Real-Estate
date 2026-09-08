@@ -124,7 +124,7 @@ function Navigation() {
           <a
             href="#home"
             onClick={(e) => handleNavClick(e, 'home')}
-            className="reveal-nav flex items-center gap-2.5 sm:gap-3 md:gap-4 z-50 relative group transition-opacity duration-300 hover:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#242424]/20 rounded-sm"
+            className="reveal-nav flex items-center gap-2.5 sm:gap-3 md:gap-4 z-50 relative group transition-opacity duration-300 hover:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#242424]/20 rounded-sm shrink-0"
           >
             {/* Architectural Emblem Icon */}
             <img
@@ -134,13 +134,46 @@ function Navigation() {
             />
 
             {/* Subtle Vertical Divider */}
-            <span className="h-4 sm:h-4.5 md:h-5.5 w-px bg-[#242424]/20 inline-block shrink-0" />
+            <span className="navbar-brand-divider h-4 sm:h-4.5 md:h-5.5 w-px bg-[#242424]/20 inline-block shrink-0" />
 
             {/* Company Name */}
-            <span className="font-body text-[10px] sm:text-sm md:text-sm tracking-[0.18em] sm:tracking-[0.22em] md:tracking-[0.25em] uppercase font-medium text-[#242424] whitespace-nowrap">
+            <span className="navbar-company-name font-body text-[10px] sm:text-sm md:text-sm tracking-[0.18em] sm:tracking-[0.22em] md:tracking-[0.25em] uppercase font-medium text-[#242424] whitespace-nowrap">
               {company.name}
             </span>
           </a>
+
+          {/* Narrow Mobile Language Switcher — direct EN | हिंदी centered between logo and explore */}
+          <div
+            className="navbar-narrow-lang reveal-nav md:hidden items-center justify-center gap-1.5 sm:gap-2 z-50"
+            aria-label="Language selection"
+          >
+            <button
+              onClick={() => setLanguage('en')}
+              aria-label="Switch language to English"
+              aria-pressed={language === 'en'}
+              className={`lang-btn font-body text-xs tracking-[0.14em] uppercase transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#242424]/20 rounded-sm px-1.5 py-1 ${
+                language === 'en'
+                  ? 'text-[#242424] opacity-100 font-medium'
+                  : 'text-[#242424]/40 hover:text-[#242424]/70'
+              }`}
+            >
+              EN
+            </button>
+            <span className="text-[#242424]/25 text-xs select-none" aria-hidden="true">|</span>
+            <button
+              onClick={() => setLanguage('hi')}
+              aria-label="Switch language to Hindi"
+              aria-pressed={language === 'hi'}
+              className={`lang-btn lang-btn--devanagari font-body text-xs tracking-[0.06em] transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#242424]/20 rounded-sm px-1.5 py-1 ${
+                language === 'hi'
+                  ? 'text-[#242424] opacity-100 font-medium'
+                  : 'text-[#242424]/40 hover:text-[#242424]/70'
+              }`}
+              style={{ fontFamily: '"Noto Sans Devanagari", sans-serif' }}
+            >
+              हिंदी
+            </button>
+          </div>
 
           {/* Desktop Navigation */}
           <ul className="reveal-nav hidden md:flex items-center gap-8 group">
@@ -200,9 +233,9 @@ function Navigation() {
           </div>
 
           {/* Mobile Controls: compact language button + Explore */}
-          <div className="reveal-nav md:hidden flex items-center gap-2 z-50 relative">
+          <div className="reveal-nav md:hidden flex items-center gap-2 z-50 relative shrink-0">
             {/* Compact Language Button — shows the other language as a short label */}
-            <div ref={langBtnRef} className="relative">
+            <div ref={langBtnRef} className="navbar-compact-lang relative">
               <button
                 className="font-body text-[10px] sm:text-sm tracking-[0.12em] uppercase text-[#242424]/60 hover:text-[#242424] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#242424]/20 rounded-sm px-1.5 py-2 min-w-[32px] text-center"
                 onClick={() => setIsLangPanelOpen((prev) => !prev)}
