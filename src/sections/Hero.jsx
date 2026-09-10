@@ -1,5 +1,10 @@
 import { useRef } from 'react'
 import { hero, company } from '../data/siteData'
+import backPng from '../assets/back.png'
+import leftTopFoliage from '../assets/left-top-foliage.png'
+import rightTopFoliage from '../assets/right-top-foliage.png'
+import leftBottomFoliage from '../assets/left-bottom-foliage.png'
+import rightBottomFoliage from '../assets/right-bottom-foliage.png'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { CustomEase } from 'gsap/CustomEase'
@@ -369,165 +374,106 @@ scrollTl
       // If pacing feels too fast: widen 'end' only (e.g. '90% top').
       // Do not adjust scale, movement distances, or scrub value.
       const mobileTl = gsap.timeline({
-  scrollTrigger: {
-    trigger: container,
-    start: 'top top',
-    end: '+=140%',
-    scrub: 0.8,
-    pin: true,
-    pinSpacing: true,
-    anticipatePin: 1,
-    invalidateOnRefresh: true,
-  }
-})
-
-gsap.set('.hero-image-wrapper', {
-  transformOrigin: '50% 55%',
-})
-
-gsap.set('.hero-image', {
-  transformOrigin: '50% 55%',
-})
+        scrollTrigger: {
+          trigger: container,
+          start: 'top top',
+          end: '+=200%',
+          scrub: 0.8,
+          pin: true,
+          pinSpacing: true,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+        }
+      })
 
       mobileTl
+        // ═══════════════════════════════════════
+        // PHASE 1: ORIGINAL HEADLINE & LABELS SEPARATION & FADE
+        // ═══════════════════════════════════════
+        .set('.hero-curtain', { opacity: 0 }, 0)
+        .to(lines[0], { x: -10, y: -42, ease: 'none', duration: 4.5 }, 0)
+        .to(lines[1], { x: 8, y: 38, ease: 'none', duration: 4.5 }, 0)
+        .to(lines[0], { opacity: 0, ease: 'none', duration: 2.8 }, 1.5)
+        .to(lines[1], { opacity: 0, ease: 'none', duration: 2.8 }, 1.5)
+        .to('.hero-label', { y: -20, opacity: 0, ease: 'none', duration: 3 }, 1)
 
-  // ═══════════════════════════════════════
-  // HEADLINE — SEPARATE FIRST
-  // ═══════════════════════════════════════
+        // ═══════════════════════════════════════
+        // PHASE 2: BUILDING IMAGE FADES OUT COMPLETELY
+        // (Starts after headline begins disappearing; fully gone by 7.0)
+        // ═══════════════════════════════════════
+        .to('.hero-image', { opacity: 0, ease: 'power1.inOut', duration: 3.0 }, 4.0)
 
-  // Line 1: most movement happens before fading
-  .to(
-    lines[0],
-    {
-      x: -10,
-      y: -42,
-      ease: 'none',
-      duration: 7,
-    },
-    0
-  )
+        // ═══════════════════════════════════════
+        // PHASE 3: REVEAL back.png (ONLY AFTER building is completely invisible)
+        // (Zero crossfade: 7.0 to 7.8 is clear ivory gap)
+        // ═══════════════════════════════════════
+        .fromTo('.hero-stone-image',
+          { opacity: 0 },
+          { opacity: 1, ease: 'power1.inOut', duration: 3.6 },
+          7.8
+        )
 
-  // Small final movement during fade
-  .to(
-    lines[0],
-    {
-      x: -12,
-      y: -50,
-      ease: 'none',
-      duration: 3,
-    },
-    7
-  )
+        // ═══════════════════════════════════════
+        // PHASE 4: REVEAL NEW TYPOGRAPHY INSIDE CENTRAL STONE
+        // (Once back.png is substantially/fully visible at 11.4+)
+        // ═══════════════════════════════════════
+        // Line 1 emerges
+        .fromTo('.hero-stone-line-upper',
+          { opacity: 0, y: 16, scale: 0.97 },
+          { opacity: 1, y: 0, scale: 1, ease: 'power2.out', duration: 2.8 },
+          11.6
+        )
+        // Divider resolves
+        .fromTo('.hero-stone-divider',
+          { opacity: 0, scale: 0.8 },
+          { opacity: 1, scale: 1, ease: 'power2.out', duration: 2.0 },
+          12.6
+        )
+        // Line 2 emerges
+        .fromTo('.hero-stone-line-lower',
+          { opacity: 0, y: 16, scale: 0.97 },
+          { opacity: 1, y: 0, scale: 1, ease: 'power2.out', duration: 2.4 },
+          13.4
+        )
 
+        // ═══════════════════════════════════════
+        // PHASE 4B: ORGANIC FOLIAGE ENTRANCE
+        // (Begins with text at 11.6, subtle stagger, completes slightly after text at 16.35)
+        // ═══════════════════════════════════════
+        // 1. Top-Left: first (anchored further out toward top-left edge)
+        .fromTo('.hero-foliage-tl',
+          { x: -140, y: -120, opacity: 0, rotate: -6 },
+          { x: 0, y: 0, opacity: 1, rotate: 0, ease: 'power2.out', duration: 4.2 },
+          11.6
+        )
+        // 2. Top-Right: slightly after
+        .fromTo('.hero-foliage-tr',
+          { x: 150, y: -130, opacity: 0, rotate: 6 },
+          { x: 0, y: 0, opacity: 1, rotate: 0, ease: 'power2.out', duration: 4.15 },
+          11.85
+        )
+        // 3. Bottom-Left: enters from left edge, moving inward and slightly upward (↗)
+        .fromTo('.hero-foliage-bl',
+          { x: -150, y: 40, opacity: 0, rotate: 4 },
+          { x: 0, y: 0, opacity: 1, rotate: 0, ease: 'power2.out', duration: 4.05 },
+          12.1
+        )
+        // 4. Bottom-Right: enters from right edge, moving inward and slightly upward (↖)
+        .fromTo('.hero-foliage-br',
+          { x: 150, y: 40, opacity: 0, rotate: -4 },
+          { x: 0, y: 0, opacity: 1, rotate: 0, ease: 'power2.out', duration: 4.0 },
+          12.35
+        )
 
-  // Line 2: opposite direction
-  .to(
-    lines[1],
-    {
-      x: 8,
-      y: 38,
-      ease: 'none',
-      duration: 7,
-    },
-    0
-  )
+        // SUBTLE FINAL TYPOGRAPHY GROWTH
+        .to('.hero-stone-text', {
+          scale: 1.06,
+          ease: 'power2.out',
+          duration: 1.8,
+        }, 16.4)
 
-  // Small final continuation
-  .to(
-    lines[1],
-    {
-      x: 10,
-      y: 45,
-      ease: 'none',
-      duration: 3,
-    },
-    7
-  )
-
-
-  // Headline stays fully visible through most of the separation
-  .to(
-    lines[0],
-    {
-      opacity: 0,
-      ease: 'none',
-      duration: 3.5,
-    },
-    6.5
-  )
-
-  .to(
-    lines[1],
-    {
-      opacity: 0,
-      ease: 'none',
-      duration: 3.5,
-    },
-    6.5
-  )
-
-
-  // ═══════════════════════════════════════
-  // SUPPORTING LABELS
-  // ═══════════════════════════════════════
-
-  .to(
-    '.hero-label',
-    {
-      y: -20,
-      opacity: 0,
-      ease: 'none',
-      duration: 7,
-    },
-    2
-  )
-
-
-  // ═══════════════════════════════════════
-  // MOBILE IMAGE TAKEOVER
-  // ═══════════════════════════════════════
-  //
-  // The wrapper scales only — no y movement.
-  // Moving the clipping frame (overflow:hidden) would shift the entire
-  // image box, which reads as the frame floating rather than the image
-  // taking over the composition.
-  //
-  // Compositional reframing comes from moving the INNER image (hero-image)
-  // upward within the stationary clipped frame. This creates a camera-pan
-  // effect — the viewer is gradually drawn into the architecture.
-  //
-  // Wrapper: frame grows (scale 1 → 1.10), stays in position
-  // Inner:   image pans up within the frame (y: -22) + slight zoom (1.04)
-
-  // Wrapper: scale only, delayed start so headline leads
-  .to(
-    '.hero-image-wrapper',
-    {
-      scale: 1.10,
-      ease: 'none',
-      duration: 6,
-    },
-    3.5
-  )
-
-  // Inner image: camera pan upward within the clipping frame.
-  // Negative y reveals more of the upper portion of the building.
-  // Scale adds a secondary subtle zoom that compounds with the wrapper.
-  .to(
-    '.hero-image',
-    {
-      scale: 1.04,
-      y: -22,
-      ease: 'none',
-      duration: 5.5,
-    },
-    4.5
-  )
-
-  // Final hold: image settled at dominant composition.
-  // No further changes — user sees the completed state before Hero releases.
-  .to({}, { duration: 1.5 })
-
+        // FINAL HOLD
+        .to({}, { duration: 3.2 })
 
     })
   }, { scope: containerRef })
@@ -536,7 +482,7 @@ gsap.set('.hero-image', {
     <section
       id="home"
       ref={containerRef}
-      className="relative flex flex-col justify-start md:justify-center md:min-h-screen section-padding-x pt-24 pb-10 sm:pt-28 sm:pb-16 md:py-32 bg-ivory overflow-hidden"
+      className="relative flex flex-col justify-start md:justify-center min-h-[100svh] section-padding-x pt-24 pb-10 sm:pt-28 sm:pb-16 md:py-32 bg-ivory overflow-hidden"
     >
       <div className="container-base grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-12 items-start lg:items-center relative z-10">
         {/* Main Statement */}
@@ -570,7 +516,7 @@ gsap.set('.hero-image', {
         </div>
 
         {/* Editorial Image */}
-        <div className="hero-image-wrapper col-span-1 lg:col-span-5 h-[48svh] sm:h-[52svh] md:h-[55vh] lg:h-[65vh] w-full mt-6 lg:mt-0 overflow-hidden relative will-change-transform">
+        <div className="hero-image-wrapper col-span-1 lg:col-span-5 h-[48svh] sm:h-[52svh] md:h-[55vh] lg:h-[65vh] w-full mt-6 lg:mt-0 overflow-hidden relative will-change-transform border-0 bg-transparent">
           {/* Vertical Curtain Overlay */}
           <div className="hero-curtain absolute inset-0 bg-black z-20 pointer-events-none" />
           <div className="hero-image-inner absolute inset-0">
@@ -581,6 +527,82 @@ gsap.set('.hero-image', {
                 className="hero-image w-full h-full object-cover md:grayscale md:hover:grayscale-0 md:transition-all md:duration-1000 origin-center"
               />
             )}
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Full-Hero Stone Background — separate absolute layer covering the entire Hero */}
+      <img
+        src={backPng}
+        alt="Stone Texture"
+        className="hero-stone-image md:hidden absolute inset-0 w-full h-full object-cover object-[50%_48%] opacity-0 pointer-events-none z-[1]"
+      />
+
+      {/* Mobile Foliage Layers — independent Hero-level layers (z-[10], below typography z-20) */}
+      <div className="hero-foliage-layer md:hidden absolute inset-0 overflow-hidden pointer-events-none z-[10]">
+        {/* Top-Left Foliage — clearly enters from top + left edges */}
+        <img
+          src={leftTopFoliage}
+          alt=""
+          aria-hidden="true"
+          className="hero-foliage hero-foliage-tl absolute -top-[3%] -left-[6%] w-[60vw] max-w-[245px] opacity-0 will-change-transform"
+        />
+
+        {/* Top-Right Foliage */}
+        <img
+          src={rightTopFoliage}
+          alt=""
+          aria-hidden="true"
+          className="hero-foliage hero-foliage-tr absolute -top-[3%] -right-[6%] w-[68vw] max-w-[280px] opacity-0 will-change-transform"
+        />
+
+        {/* Bottom-Left Foliage — originates from left side in lower 70-80% area, above bottom edge */}
+        <img
+          src={leftBottomFoliage}
+          alt=""
+          aria-hidden="true"
+          className="hero-foliage hero-foliage-bl absolute top-[57%] -left-[7%] w-[60vw] max-w-[245px] opacity-0 will-change-transform"
+        />
+
+        {/* Bottom-Right Foliage — originates from right side in lower 70-80% area, above bottom edge */}
+        <img
+          src={rightBottomFoliage}
+          alt=""
+          aria-hidden="true"
+          className="hero-foliage hero-foliage-br absolute top-[57%] -right-[7%] w-[60vw] max-w-[245px] opacity-0 will-change-transform"
+        />
+      </div>
+
+      {/* Mobile Stone Typography — emerges inside the large central stone of back.png */}
+      <div className="hero-stone-overlay md:hidden absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+        <div className="hero-stone-text-container relative w-[80%] max-w-[320px] flex flex-col items-center justify-center overflow-visible py-3 translate-y-[2%]">
+          <div className="hero-stone-text w-full flex flex-col items-center justify-center text-center">
+            
+            {/* FIRST LINE */}
+            <div
+              className={`hero-stone-line hero-stone-line-upper opacity-0 will-change-transform flex w-full justify-center text-center font-display font-normal text-[clamp(19px,5.6vw,26px)] leading-[1.15] tracking-[0.14em] uppercase text-[#F2E7D5] whitespace-nowrap${language === 'hi' ? ' lang-devanagari' : ''}`}
+              style={{ textShadow: '0 2px 6px rgba(55, 35, 22, 0.45)' }}
+            >
+              {t('hero.transition.line1')}
+            </div>
+
+            {/* DIVIDER */}
+            <div className="hero-stone-divider will-change-transform flex items-center justify-center w-[95px] sm:w-[110px] my-2.5 sm:my-3 opacity-0">
+              <div className="h-[1px] flex-grow bg-[#F2E7D5]/70"></div>
+              <svg className="mx-2 w-[8px] h-[8px] shrink-0" viewBox="0 0 24 24" fill="#F2E7D5" style={{ filter: 'drop-shadow(0px 2px 4px rgba(55, 35, 22, 0.45))' }}>
+                <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z"/>
+              </svg>
+              <div className="h-[1px] flex-grow bg-[#F2E7D5]/70"></div>
+            </div>
+
+            {/* SECOND LINE */}
+            <div
+              className={`hero-stone-line hero-stone-line-lower opacity-0 will-change-transform flex w-full justify-center text-center font-display font-normal text-[clamp(19px,5.6vw,26px)] leading-[1.15] tracking-[0.14em] uppercase text-[#F2E7D5] whitespace-nowrap${language === 'hi' ? ' lang-devanagari' : ''}`}
+              style={{ textShadow: '0 2px 6px rgba(55, 35, 22, 0.45)' }}
+            >
+              {t('hero.transition.line2')}
+            </div>
+
           </div>
         </div>
       </div>

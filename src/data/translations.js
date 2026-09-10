@@ -40,6 +40,10 @@ const translations = {
       headlineLines: ['Building Value.', 'Shaping Tomorrow.'],
       label: 'Real Estate Investment & Development',
       scrollIndicator: 'Scroll',
+      transition: {
+        line1: 'SPACES WITH PURPOSE.',
+        line2: 'VALUE THAT ENDURES.',
+      },
     },
 
     /* ── Introduction ───────────────────────────────────────────────── */
@@ -307,6 +311,10 @@ const translations = {
       headlineLines: ['मूल्य निर्माण।', 'कल को आकार देना।'],
       label: 'रियल एस्टेट निवेश एवं विकास',
       scrollIndicator: 'स्क्रॉल करें',
+      transition: {
+        line1: 'उद्देश्यपूर्ण स्थान।',
+        line2: 'स्थायी मूल्य।',
+      },
     },
 
     /* ── Introduction ───────────────────────────────────────────────── */

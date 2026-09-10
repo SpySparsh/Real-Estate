@@ -1839,3 +1839,48 @@ html[lang="hi"] .cta-headline {
     align-items: center;
   }
 }
+
+/* ── Hero Brand Transition (Mobile) ── */
+.hero-brand-bg {
+  background-image:
+    /* 1. Existing Foliage (Top Right Corner) - Kept untouched as requested */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cdefs%3E%3Cfilter id='b0'%3E%3CfeGaussianBlur stdDeviation='1.5'/%3E%3C/filter%3E%3C/defs%3E%3Cg filter='url(%23b0)' fill='%236A705B' opacity='0.85'%3E%3Cpath d='M200,-20 C140,0 120,50 140,100 C160,80 180,50 200,-20 Z'/%3E%3Cpath d='M200,40 C160,50 150,80 170,120 C180,90 200,70 200,40 Z' opacity='0.9'/%3E%3C/g%3E%3C/svg%3E"),
+    /* 2. Real Architectural Background Image (Unwashed) */
+    url('./assets/back.png');
+    
+  background-size: 
+    45vw 45vw,
+    cover;
+    
+  background-position:
+    top -2vw right -5vw,
+    center center;
+    
+  background-repeat:
+    no-repeat,
+    no-repeat;
+}
+
+.hero-brand-line {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  will-change: transform, opacity;
+  text-shadow: 0 4px 12px rgba(23, 23, 22, 0.05); /* Adds a hint of depth to text */
+}
+
+@media (max-width: 767px) {
+  .hero-image-wrapper {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+}
+@media (max-width: 767px) {
+  .hero-curtain {
+    border: 0 !important;
+    box-shadow: none !important;
+    outline: 0 !important;
+  }
+}
