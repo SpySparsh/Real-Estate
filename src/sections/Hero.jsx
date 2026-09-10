@@ -482,9 +482,10 @@ scrollTl
     <section
       id="home"
       ref={containerRef}
-      className="relative flex flex-col justify-start md:justify-center min-h-[100svh] section-padding-x pt-24 pb-10 sm:pt-28 sm:pb-16 md:py-32 bg-ivory overflow-hidden"
+      className="relative min-h-[100svh] bg-ivory overflow-hidden"
     >
-      <div className="container-base grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-12 items-start lg:items-center relative z-10">
+      <div className="section-focus-wrapper relative w-full min-h-[100svh] flex flex-col justify-start md:justify-center section-padding-x pt-24 pb-10 sm:pt-28 sm:pb-16 md:py-32">
+        <div className="container-base grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-12 items-start lg:items-center relative z-10">
         {/* Main Statement */}
         <div className="hero-text-content lg:col-span-7 will-change-transform">
           <div className="mb-4 md:mb-8">
@@ -615,6 +616,7 @@ scrollTl
             {t('hero.scrollIndicator')}
           </span>
         </p>
+      </div>
       </div>
     </section>
   )

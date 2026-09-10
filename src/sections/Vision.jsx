@@ -29,7 +29,7 @@ function Vision() {
         scrollTrigger: {
           id: 'vision-desktop-eyebrow',
           trigger: containerRef.current,
-          start: getPostPhilosophyStart('top 80%'),
+          start: 'top 22%',
           toggleActions: 'play none none none',
           invalidateOnRefresh: true,
         }
@@ -45,7 +45,7 @@ function Vision() {
           scrollTrigger: {
             id: `vision-desktop-headline-${i}`,
             trigger: line.parentElement || line,
-            start: getPostPhilosophyStart('top 85%'),
+            start: 'top 20%',
             toggleActions: 'play none none none',
             invalidateOnRefresh: true,
           }
@@ -135,7 +135,7 @@ function Vision() {
         scrollTrigger: {
           id: 'vision-mobile-eyebrow',
           trigger: containerRef.current,
-          start: getPostPhilosophyStart('top 85%'),
+          start: 'top 25%',
           toggleActions: 'play none none none',
           invalidateOnRefresh: true,
         }
@@ -151,7 +151,7 @@ function Vision() {
           scrollTrigger: {
             id: `vision-mobile-headline-${i}`,
             trigger: line.parentElement || line,
-            start: getPostPhilosophyStart('top 88%'),
+            start: 'top 22%',
             toggleActions: 'play none none none',
             invalidateOnRefresh: true,
           }
@@ -266,6 +266,7 @@ function Vision() {
 
   return (
     <section id="about" ref={containerRef} className="section-padding-x py-12 sm:py-16 md:py-24 lg:py-32 xl:py-40 bg-ivory overflow-hidden">
+      <div className="section-focus-wrapper w-full">
       <div className="container-base">
         <p className="vision-eyebrow eyebrow mb-6 md:mb-16">
           {t('vision.eyebrow')}
@@ -309,6 +310,7 @@ function Vision() {
             </p>
           </div>
         </div>
+      </div>
       </div>
     </section>
   )

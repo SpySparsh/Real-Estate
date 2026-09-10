@@ -25,62 +25,90 @@ function Enquiry() {
   useGSAP(() => {
     const mm = gsap.matchMedia()
 
-    mm.add("(prefers-reduced-motion: no-preference)", () => {
-      // ── Eyebrow ──
-      gsap.from('.enquiry-eyebrow', {
-        opacity: 0,
-        y: 15,
-        duration: 0.8,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top 80%',
-          toggleActions: 'play none none none',
+    mm.add(
+      {
+        isDesktop: '(min-width: 768px)',
+        isMobile: '(max-width: 767px)',
+        reduceMotion: '(prefers-reduced-motion: reduce)',
+      },
+      (context) => {
+        if (context.conditions.reduceMotion) {
+          gsap.set(['.enquiry-eyebrow', '.enquiry-headline', '.enquiry-divider', '.enquiry-form-container'], {
+            opacity: 1,
+            yPercent: 0,
+            y: 0,
+            scaleX: 1,
+          })
+          return
         }
-      })
+        const { isDesktop } = context.conditions
 
-      // ── Headline: masked staggered reveal ──
-      gsap.utils.toArray('.enquiry-headline').forEach((line, i) => {
-        gsap.from(line, {
-          yPercent: 100,
-          opacity: 0,
-          duration: 1.2,
-          delay: i * 0.12,
-          ease: 'power4.out',
+        // Dynamic start point: strictly gates opening until focus handoff completes
+        const getHandoffEnd = () => {
+          const t = ScrollTrigger.getById('focus-handoff-cta-contact')
+          if (t && typeof t.end === 'number') {
+            return t.end
+          }
+          if (containerRef.current) {
+            const rect = containerRef.current.getBoundingClientRect()
+            const scrollTop = window.scrollY || document.documentElement.scrollTop
+            const triggerOffset = isDesktop ? window.innerHeight * 0.22 : window.innerHeight * 0.25
+            return scrollTop + rect.top - triggerOffset
+          }
+          return isDesktop ? 'top 22%' : 'top 25%'
+        }
+
+        // Set initial pre-opening dormant states
+        gsap.set('.enquiry-eyebrow', { y: 14, opacity: 0 })
+        gsap.set('.enquiry-headline', { yPercent: 100, opacity: 0 })
+        gsap.set('.enquiry-divider', { scaleX: 0, transformOrigin: 'left center' })
+        gsap.set('.enquiry-form-container', { y: 24, opacity: 0 })
+
+        // ── Single unified scrubbed opening timeline for initial composition ──
+        const tl = gsap.timeline({
           scrollTrigger: {
-            trigger: line.parentElement || containerRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none none',
+            id: 'enquiry-opening',
+            trigger: containerRef.current,
+            start: getHandoffEnd,
+            end: () => `+=${window.innerHeight * (isDesktop ? 0.35 : 0.30)}`,
+            scrub: 0.8,
+            invalidateOnRefresh: true,
           }
         })
-      })
 
-      // ── Fine divider extends ──
-      gsap.from('.enquiry-divider', {
-        scaleX: 0,
-        transformOrigin: 'left center',
-        duration: 1,
-        ease: 'power3.inOut',
-        scrollTrigger: {
-          trigger: '.enquiry-divider',
-          start: 'top 88%',
-          toggleActions: 'play none none none',
-        }
-      })
+        // 1. Eyebrow label settles in
+        tl.to('.enquiry-eyebrow', {
+          y: 0,
+          opacity: 1,
+          duration: 0.30,
+          ease: 'power2.out',
+        }, 0)
 
-      // ── Form container slides in ──
-      gsap.from('.enquiry-form-container', {
-        opacity: 0,
-        y: 30,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: '.enquiry-form-container',
-          start: 'top 85%',
-          toggleActions: 'play none none none',
-        }
-      })
-    })
+        // 2. Headline lines masked rise up
+        tl.to('.enquiry-headline', {
+          yPercent: 0,
+          opacity: 1,
+          stagger: 0.10,
+          duration: 0.45,
+          ease: 'power2.out',
+        }, 0.10)
+
+        // 3. Fine divider extends from left
+        tl.to('.enquiry-divider', {
+          scaleX: 1,
+          duration: 0.30,
+          ease: 'power2.out',
+        }, 0.35)
+
+        // 4. Form container emerges early so user never experiences an empty void
+        tl.to('.enquiry-form-container', {
+          y: 0,
+          opacity: 1,
+          duration: 0.45,
+          ease: 'power2.out',
+        }, 0.40)
+      }
+    )
   }, { scope: containerRef })
 
   const [formData, setFormData] = useState({
@@ -199,7 +227,8 @@ function Enquiry() {
   }
 
   return (
-    <section id="contact" ref={containerRef} className="section-padding-x py-12 sm:py-16 md:py-24 lg:py-32 xl:py-40 bg-ivory">
+    <section id="contact" ref={containerRef} className="section-padding-x py-16 sm:py-20 md:py-28 lg:py-36 bg-ivory text-[#171716]">
+      <div className="section-focus-wrapper w-full">
       <div className="container-base">
         {/* Section Label */}
         <p className="enquiry-eyebrow eyebrow mb-6 md:mb-12">
@@ -392,6 +421,7 @@ function Enquiry() {
             </form>
           )}
         </div>
+      </div>
       </div>
     </section>
   )

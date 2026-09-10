@@ -165,49 +165,59 @@ const [isTransitioning, setIsTransitioning] = useState(false)
   useGSAP(() => {
     const mm = gsap.matchMedia()
 
-    mm.add("(prefers-reduced-motion: no-preference)", () => {
-      gsap.from('.partners-section-intro', {
-        opacity: 0,
-        y: 30,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          id: 'partners-intro',
-          trigger: containerRef.current,
-          start: getPostPhilosophyStart('top 80%'),
-          toggleActions: 'play none none none',
-          invalidateOnRefresh: true,
-        },
-      })
+    mm.add(
+      {
+        isDesktop: '(min-width: 768px)',
+        isMobile: '(max-width: 767px)',
+        reduceMotion: '(prefers-reduced-motion: reduce)',
+      },
+      (context) => {
+        if (context.conditions.reduceMotion) return
+        const { isDesktop } = context.conditions
 
-      gsap.from('.partners-stage', {
-        opacity: 0,
-        y: 40,
-        duration: 1.2,
-        ease: 'power3.out',
-        scrollTrigger: {
-          id: 'partners-stage',
-          trigger: containerRef.current,
-          start: getPostPhilosophyStart('top 75%'),
-          toggleActions: 'play none none none',
-          invalidateOnRefresh: true,
-        },
-      })
+        gsap.from('.partners-section-intro', {
+          opacity: 0,
+          y: 30,
+          duration: 1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            id: 'partners-intro',
+            trigger: containerRef.current,
+            start: isDesktop ? 'top 22%' : 'top 25%',
+            toggleActions: 'play none none none',
+            invalidateOnRefresh: true,
+          },
+        })
 
-      gsap.from('.partners-nav-container', {
-        opacity: 0,
-        y: 20,
-        duration: 0.9,
-        ease: 'power3.out',
-        scrollTrigger: {
-          id: 'partners-nav',
-          trigger: containerRef.current,
-          start: getPostPhilosophyStart('top 70%'),
-          toggleActions: 'play none none none',
-          invalidateOnRefresh: true,
-        },
-      })
-    })
+        gsap.from('.partners-stage', {
+          opacity: 0,
+          y: 40,
+          duration: 1.2,
+          ease: 'power3.out',
+          scrollTrigger: {
+            id: 'partners-stage',
+            trigger: containerRef.current,
+            start: isDesktop ? 'top 18%' : 'top 20%',
+            toggleActions: 'play none none none',
+            invalidateOnRefresh: true,
+          },
+        })
+
+        gsap.from('.partners-nav-container', {
+          opacity: 0,
+          y: 20,
+          duration: 0.9,
+          ease: 'power3.out',
+          scrollTrigger: {
+            id: 'partners-nav',
+            trigger: containerRef.current,
+            start: isDesktop ? 'top 15%' : 'top 16%',
+            toggleActions: 'play none none none',
+            invalidateOnRefresh: true,
+          },
+        })
+      }
+    )
   }, { scope: containerRef })
 
   // Autoplay logic
@@ -264,6 +274,7 @@ const [isTransitioning, setIsTransitioning] = useState(false)
       ref={containerRef}
       className="section-padding-x bg-ivory relative overflow-hidden"
     >
+      <div className="section-focus-wrapper w-full">
       {/* Desktop: ~100vh stage */}
       <div className="hidden md:block md:min-h-screen flex flex-col justify-center py-20">
         <div className="container-base">
@@ -529,6 +540,7 @@ const [isTransitioning, setIsTransitioning] = useState(false)
             ))}
           </div>
         </div>
+      </div>
       </div>
     </section>
   )

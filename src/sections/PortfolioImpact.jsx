@@ -24,36 +24,45 @@ function PortfolioImpact() {
   useGSAP(() => {
     const mm = gsap.matchMedia()
 
-    mm.add("(prefers-reduced-motion: no-preference)", () => {
-      // ── Section entrance ──
-      gsap.from('.impact-eyebrow', {
-        opacity: 0,
-        y: 20,
-        duration: 0.8,
-        ease: 'power3.out',
-        scrollTrigger: {
-          id: 'impact-eyebrow',
-          trigger: containerRef.current,
-          start: getPostPhilosophyStart('top 80%'),
-          toggleActions: 'play none none none',
-          invalidateOnRefresh: true,
-        }
-      })
+    mm.add(
+      {
+        isDesktop: '(min-width: 768px)',
+        isMobile: '(max-width: 767px)',
+        reduceMotion: '(prefers-reduced-motion: reduce)',
+      },
+      (context) => {
+        if (context.conditions.reduceMotion) return
+        const { isDesktop } = context.conditions
 
-      // ── Divider wipe ──
-      gsap.from('.impact-top-divider', {
-        scaleX: 0,
-        transformOrigin: 'left center',
-        duration: 1.2,
-        ease: 'power3.inOut',
-        scrollTrigger: {
-          id: 'impact-top-divider',
-          trigger: containerRef.current,
-          start: getPostPhilosophyStart('top 75%'),
-          toggleActions: 'play none none none',
-          invalidateOnRefresh: true,
-        }
-      })
+        // ── Section entrance ──
+        gsap.from('.impact-eyebrow', {
+          opacity: 0,
+          y: 20,
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: {
+            id: 'impact-eyebrow',
+            trigger: containerRef.current,
+            start: isDesktop ? 'top 22%' : 'top 25%',
+            toggleActions: 'play none none none',
+            invalidateOnRefresh: true,
+          }
+        })
+
+        // ── Divider wipe ──
+        gsap.from('.impact-top-divider', {
+          scaleX: 0,
+          transformOrigin: 'left center',
+          duration: 1.2,
+          ease: 'power3.inOut',
+          scrollTrigger: {
+            id: 'impact-top-divider',
+            trigger: containerRef.current,
+            start: isDesktop ? 'top 18%' : 'top 20%',
+            toggleActions: 'play none none none',
+            invalidateOnRefresh: true,
+          }
+        })
 
       // ── Statistics: staggered entry + number counting ──
       const stats = gsap.utils.toArray('.impact-stat')
@@ -229,10 +238,8 @@ function PortfolioImpact() {
   }
 
   return (
-    <section ref={containerRef} className="section-padding-x py-12 sm:py-16 md:py-24 lg:py-32 xl:py-40 bg-black text-ivory relative overflow-hidden">
-      {/* Subtle top gradient transition from ivory */}
-      <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-ivory to-transparent z-10 pointer-events-none" />
-
+    <section id="portfolio-impact" ref={containerRef} className="section-padding-x py-12 sm:py-16 md:py-24 lg:py-32 xl:py-40 bg-black text-ivory relative overflow-hidden">
+      <div className="section-focus-wrapper w-full relative z-20">
       <div className="container-base relative z-20">
         {/* Section Label */}
         <p className="impact-eyebrow eyebrow mb-6 md:mb-12 text-neutral/70">
@@ -271,6 +278,7 @@ function PortfolioImpact() {
             )
           })}
         </div>
+      </div>
       </div>
     </section>
   )

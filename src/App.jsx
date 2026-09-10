@@ -13,6 +13,7 @@ import Partners from './sections/Partners'
 import Enquiry from './sections/Enquiry'
 import Footer from './components/layout/Footer'
 import { useEditorialScroll } from './hooks/useEditorialScroll'
+import { useSectionFocus } from './hooks/useSectionFocus'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -41,6 +42,8 @@ function App() {
     philosophyRef,
     projectsRef,
   )
+
+  useSectionFocus()
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches

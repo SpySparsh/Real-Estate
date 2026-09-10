@@ -229,6 +229,13 @@ html[lang="hi"] .enquiry-headline {
 
 /* ── Philosophy Large Background Number ── */
 
+/* ── Section Focus System ── */
+.section-focus-wrapper {
+  transform-origin: 50% 50%;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    INTRODUCTION SECTION
    ═══════════════════════════════════════════════════════════════════════════ */

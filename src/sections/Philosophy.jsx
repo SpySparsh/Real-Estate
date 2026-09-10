@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useGSAP } from '@gsap/react'
 import { useTranslation } from '../hooks/useTranslation'
+
+gsap.registerPlugin(ScrollTrigger)
 
 // Asset imports
 import locationBg from '../assets/images/location/contour-map.svg'
@@ -209,6 +213,59 @@ export default function Philosophy({ isActive = false }) {
       if (timerRef.current) clearTimeout(timerRef.current)
     }
   }, [])
+
+  // Opening animation — scroll-controlled, plays ONLY after Philosophy is visually focused
+  useGSAP(() => {
+    const mm = gsap.matchMedia()
+
+    mm.add(
+      {
+        isDesktop: '(min-width: 768px)',
+        isMobile: '(max-width: 767px)',
+        reduceMotion: '(prefers-reduced-motion: reduce)',
+      },
+      (context) => {
+        if (context.conditions.reduceMotion) return
+
+        const { isDesktop } = context.conditions
+        // Starts strictly after the Introduction -> Philosophy focus handoff completes
+        const startPos = isDesktop ? 'top 22%' : 'top 25%'
+        const endPos = isDesktop ? 'top 4%' : 'top 6%'
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            id: 'philosophy-reveal',
+            trigger: sectionRef.current,
+            start: startPos,
+            end: endPos,
+            scrub: 0.8,
+            invalidateOnRefresh: true,
+          },
+        })
+
+        tl.from('.philosophy-header', {
+          opacity: 0,
+          y: 16,
+          ease: 'none',
+        }, 0)
+          .from('.philosophy-stage-content', {
+            opacity: 0,
+            y: 18,
+            ease: 'none',
+          }, 0.1)
+          .from('.philosophy-foreground-layer', {
+            opacity: 0,
+            scale: 0.88,
+            ease: 'none',
+          }, 0.15)
+          .from('.philosophy-progress', {
+            opacity: 0,
+            y: 10,
+            ease: 'none',
+          }, 0.22)
+      }
+    )
+  }, { scope: sectionRef })
 
   // Observe section visibility (pause off-screen, resume when visible)
   useEffect(() => {
@@ -423,6 +480,7 @@ export default function Philosophy({ isActive = false }) {
       className={`philosophy-section ${isActive ? 'is-active' : ''}`}
       id="philosophy"
     >
+      <div className="section-focus-wrapper w-full h-full relative">
       {/* HEADER */}
       <div className="philosophy-header">
         <span className="philosophy-eyebrow intro-eyebrow eyebrow ">{t('philosophy.eyebrow')}</span>
@@ -508,6 +566,7 @@ export default function Philosophy({ isActive = false }) {
             {stage.number}
           </button>
         ))}
+      </div>
       </div>
     </section>
   )

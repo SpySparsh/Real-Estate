@@ -335,7 +335,7 @@ const view = isDesktop
         scrollTrigger: {
           id: 'projects-intro',
           trigger: '.projects-intro',
-          start: getPostPhilosophyStart('top 80%'),
+          start: 'top 22%',
           toggleActions: 'play none none none',
           invalidateOnRefresh: true,
         },
@@ -533,7 +533,7 @@ const view = isDesktop
             scrollTrigger: {
               id: `projects-mobile-number-${index}`,
               trigger: article,
-              start: getPostPhilosophyStart('top 92%'),
+              start: index === 0 ? 'top 25%' : getPostPhilosophyStart('top 92%'),
               toggleActions: 'play none none none',
               invalidateOnRefresh: true,
             }
@@ -551,7 +551,7 @@ const view = isDesktop
             scrollTrigger: {
               id: `projects-mobile-meta-${index}`,
               trigger: article,
-              start: getPostPhilosophyStart('top 88%'),
+              start: index === 0 ? 'top 22%' : getPostPhilosophyStart('top 88%'),
               toggleActions: 'play none none none',
               invalidateOnRefresh: true,
             }
@@ -565,7 +565,7 @@ const view = isDesktop
             scrollTrigger: {
               id: `projects-mobile-curtain-${index}`,
               trigger: imageWrapper,
-              start: getPostPhilosophyStart('top 75%'),
+              start: index === 0 ? 'top 20%' : getPostPhilosophyStart('top 75%'),
               toggleActions: 'play none none none',
               invalidateOnRefresh: true,
             }
@@ -1103,6 +1103,7 @@ const view = isDesktop
       </div>
 
       <section id="projects" ref={containerRef} className="section-padding-x py-12 sm:py-16 md:py-24 lg:py-32 xl:py-40 bg-ivory">
+        <div className="section-focus-wrapper w-full">
         <div className="container-base">
 
           {/* Section Introduction */}
@@ -1277,6 +1278,7 @@ const mobileOptions = mediaOptions
             })}
           </div>
 
+        </div>
         </div>
       </section>
     </>

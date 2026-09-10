@@ -13,7 +13,8 @@ function Footer() {
   }
 
   return (
-    <footer className="bg-black text-ivory section-padding-x py-12 md:py-24 relative">
+    <footer id="footer" className="bg-black text-ivory section-padding-x py-12 md:py-24 relative">
+      <div className="section-focus-wrapper w-full">
       <div className="container-base">
         {/* Brand — proper name, NOT translated */}
         <div className="mb-12">
@@ -84,6 +85,7 @@ function Footer() {
             {t('footer.backToTop')} ↑
           </button>
         </div>
+      </div>
       </div>
     </footer>
   )

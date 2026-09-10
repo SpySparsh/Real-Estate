@@ -168,58 +168,71 @@ export default function Introduction() {
   const [activeState, setActiveState] = useState(0)
   const { t } = useTranslation()
 
-  /* Entrance animation — unchanged from original intent */
+  /* Opening animation — scroll-controlled, plays ONLY after Introduction is visually focused */
   useGSAP(() => {
     const mm = gsap.matchMedia()
 
-    mm.add('(prefers-reduced-motion: no-preference)', () => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: 'top 78%',
-          toggleActions: 'play none none none',
-        },
-      })
+    mm.add(
+      {
+        isDesktop: '(min-width: 768px)',
+        isMobile: '(max-width: 767px)',
+        reduceMotion: '(prefers-reduced-motion: reduce)',
+      },
+      (context) => {
+        if (context.conditions.reduceMotion) return
 
-      tl.from('.intro-eyebrow', {
-        opacity: 0,
-        y: 14,
-        duration: 0.5,
-        ease: 'power3.out',
-      })
-        .from(
-          '.intro-main-headline',
-          {
-            opacity: 0,
-            y: 16,
-            duration: 0.6,
-            ease: 'power3.out',
+        const { isDesktop } = context.conditions
+        // Starts strictly after the Hero -> Introduction focus handoff completes
+        const startPos = isDesktop ? 'top 22%' : 'top 25%'
+        const endPos = isDesktop ? 'top 4%' : 'top 6%'
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            id: 'intro-reveal',
+            trigger: containerRef.current,
+            start: startPos,
+            end: endPos,
+            scrub: 0.8,
+            invalidateOnRefresh: true,
           },
-          '-=0.3'
-        )
-        .from(
-          '.intro-scale-row',
-          {
-            opacity: 0,
-            y: 16,
-            stagger: 0.1,
-            duration: 0.55,
-            ease: 'power3.out',
-          },
-          '-=0.2'
-        )
-        .from(
-          '.intro-image-frame',
-          {
-            opacity: 0,
-            y: 20,
-            scale: 0.99,
-            duration: 0.9,
-            ease: 'power3.out',
-          },
-          '-=0.35'
-        )
-    })
+        })
+
+        tl.from('.intro-eyebrow', {
+          opacity: 0,
+          y: 14,
+          ease: 'none',
+        }, 0)
+          .from(
+            '.intro-main-headline',
+            {
+              opacity: 0,
+              y: 16,
+              ease: 'none',
+            },
+            0.12
+          )
+          .from(
+            '.intro-scale-row',
+            {
+              opacity: 0,
+              y: 16,
+              stagger: 0.08,
+              ease: 'none',
+            },
+            0.22
+          )
+          .from(
+            '.intro-image-frame',
+            {
+              opacity: 0,
+              y: 20,
+              scale: 0.99,
+              ease: 'none',
+            },
+            0.28
+          )
+      }
+    )
   }, { scope: containerRef })
 
   /* Crossfade between images */
@@ -329,7 +342,8 @@ export default function Introduction() {
       id="introduction"
       aria-label="Introduction — Planning to Development"
     >
-      <div className="container-base intro-inner">
+      <div className="section-focus-wrapper w-full">
+        <div className="container-base intro-inner">
 
         {/* ── Eyebrow ─────────────────────────────────────────────────── */}
         <p className="intro-eyebrow eyebrow">{t('introduction.eyebrow')}</p>
@@ -400,6 +414,7 @@ export default function Introduction() {
           </div>
 
         </div>
+      </div>
       </div>
     </section>
   )
